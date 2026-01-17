@@ -61,6 +61,16 @@ function RootLayout() {
                       </NavigationMenuLink>
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/strings/compare">
+                      <NavigationMenuLink>
+                        <div className="font-medium">Compare</div>
+                        <p className="text-muted-foreground text-xs">
+                          Compare and diff text
+                        </p>
+                      </NavigationMenuLink>
+                    </Link>
+                  </li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>

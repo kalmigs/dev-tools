@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
+import { Route as StringsCompareRouteImport } from './routes/strings/compare'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const StringsJsonFormatRoute = StringsJsonFormatRouteImport.update({
   path: '/strings/json-format',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StringsCompareRoute = StringsCompareRouteImport.update({
+  id: '/strings/compare',
+  path: '/strings/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenerateIdsRoute = GenerateIdsRouteImport.update({
   id: '/generate/ids',
   path: '/generate/ids',
@@ -32,30 +38,39 @@ const GenerateIdsRoute = GenerateIdsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/generate/ids' | '/strings/json-format'
+  fullPaths: '/' | '/generate/ids' | '/strings/compare' | '/strings/json-format'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/generate/ids' | '/strings/json-format'
-  id: '__root__' | '/' | '/generate/ids' | '/strings/json-format'
+  to: '/' | '/generate/ids' | '/strings/compare' | '/strings/json-format'
+  id:
+    | '__root__'
+    | '/'
+    | '/generate/ids'
+    | '/strings/compare'
+    | '/strings/json-format'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GenerateIdsRoute: typeof GenerateIdsRoute
+  StringsCompareRoute: typeof StringsCompareRoute
   StringsJsonFormatRoute: typeof StringsJsonFormatRoute
 }
 
@@ -75,6 +90,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StringsJsonFormatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/strings/compare': {
+      id: '/strings/compare'
+      path: '/strings/compare'
+      fullPath: '/strings/compare'
+      preLoaderRoute: typeof StringsCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generate/ids': {
       id: '/generate/ids'
       path: '/generate/ids'
@@ -88,6 +110,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GenerateIdsRoute: GenerateIdsRoute,
+  StringsCompareRoute: StringsCompareRoute,
   StringsJsonFormatRoute: StringsJsonFormatRoute,
 }
 export const routeTree = rootRouteImport
