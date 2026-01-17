@@ -8,9 +8,11 @@ import {
   NavigationMenuTrigger,
   NavigationMenuContent,
 } from '@/components/ui/navigation-menu'
+import { NotFound } from '@/components/errors/not-found'
 
 export const Route = createRootRoute({
   component: RootLayout,
+  notFoundComponent: NotFound,
 })
 
 function RootLayout() {
