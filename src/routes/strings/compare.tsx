@@ -3,9 +3,10 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { diffWords, diffChars, type Change } from 'diff'
 import { CheckIcon, XIcon, ChevronDownIcon } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
+import { Textarea } from '@/components/ui/textarea'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { cn } from '@/lib/utils'
 
@@ -531,11 +532,11 @@ function ComparePage() {
       <div className={cn('grid gap-4', !isMobile && 'grid-cols-2')}>
         <div className="space-y-2">
           <label className="text-sm font-medium">String A</label>
-          <textarea
+          <Textarea
             value={stringA}
             onChange={(e) => setStringA(e.target.value)}
             placeholder="Paste first string here..."
-            className="w-full h-40 p-3 border rounded-lg bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-40 font-mono resize-y"
           />
           <p className="text-xs text-muted-foreground">
             {wordCountA} {wordCountA === 1 ? 'word' : 'words'}
@@ -543,11 +544,11 @@ function ComparePage() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">String B</label>
-          <textarea
+          <Textarea
             value={stringB}
             onChange={(e) => setStringB(e.target.value)}
             placeholder="Paste second string here..."
-            className="w-full h-40 p-3 border rounded-lg bg-background font-mono text-sm resize-y focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-40 font-mono resize-y"
           />
           <p className="text-xs text-muted-foreground">
             {wordCountB} {wordCountB === 1 ? 'word' : 'words'}
