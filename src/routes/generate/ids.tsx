@@ -5,7 +5,7 @@ import cuid from '@bugsnag/cuid'
 import { nanoid } from 'nanoid'
 import { createId as cuid2 } from '@paralleldrive/cuid2'
 import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v6 as uuidv6, v7 as uuidv7 } from 'uuid'
-import { CheckIcon, CopyIcon } from 'lucide-react'
+import { CheckIcon, CopyIcon, ShuffleIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { NumberInput } from '@/components/ui/number-input'
 import {
@@ -203,6 +203,7 @@ function InputControls({
 
       {/* Generate Button */}
       <Button onClick={onGenerate} className="w-fit">
+        <ShuffleIcon className="size-4" />
         Generate
       </Button>
     </div>
