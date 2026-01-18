@@ -39,18 +39,16 @@ function ThemeToggle({ onClick }: { onClick: () => void }) {
 function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
   return (
     <nav className="px-2 py-2 border-b border-border bg-card flex items-center justify-between">
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <Link to="/">
-              {({ isActive }) => (
-                <NavigationMenuLink active={isActive}>
-                  Home
-                </NavigationMenuLink>
-              )}
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
+      <div className="flex items-center gap-4">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
+            DT
+          </div>
+          <span className="font-semibold text-lg">Dev Tools</span>
+        </Link>
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
             <NavigationMenuTrigger>Generate</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-48 gap-1 p-2">
@@ -105,7 +103,8 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+        </NavigationMenu>
+      </div>
       <ThemeToggle onClick={onToggleTheme} />
     </nav>
   )
