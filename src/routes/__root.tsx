@@ -53,24 +53,24 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
             <NavigationMenuContent>
               <ul className="grid w-48 gap-1 p-2">
                 <li>
-                  <Link to="/generate/ids">
-                    <NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link to="/generate/ids">
                       <div className="font-medium">IDs</div>
                       <p className="text-muted-foreground text-xs">
                         UUIDs, CUIDs, and more
                       </p>
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
                 <li>
-                  <Link to="/generate/faker">
-                    <NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link to="/generate/faker">
                       <div className="font-medium">Faker</div>
                       <p className="text-muted-foreground text-xs">
                         Generate fake data
                       </p>
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
               </ul>
             </NavigationMenuContent>
@@ -80,14 +80,14 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
             <NavigationMenuContent>
               <ul className="grid w-48 gap-1 p-2">
                 <li>
-                  <Link to="/validate/ids">
-                    <NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link to="/validate/ids">
                       <div className="font-medium">IDs</div>
                       <p className="text-muted-foreground text-xs">
                         Validate ID formats
                       </p>
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
               </ul>
             </NavigationMenuContent>
@@ -97,24 +97,24 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
             <NavigationMenuContent>
               <ul className="grid w-48 gap-1 p-2">
                 <li>
-                  <Link to="/strings/json-format">
-                    <NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link to="/strings/json-format">
                       <div className="font-medium">JSON Format</div>
                       <p className="text-muted-foreground text-xs">
                         Format and prettify JSON
                       </p>
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
                 <li>
-                  <Link to="/strings/compare">
-                    <NavigationMenuLink>
+                  <NavigationMenuLink asChild>
+                    <Link to="/strings/compare">
                       <div className="font-medium">Compare</div>
                       <p className="text-muted-foreground text-xs">
                         Compare and diff text
                       </p>
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </li>
               </ul>
             </NavigationMenuContent>
