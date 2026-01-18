@@ -44,6 +44,16 @@ function RootLayout() {
                       </NavigationMenuLink>
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/generate/faker">
+                      <NavigationMenuLink>
+                        <div className="font-medium">Faker</div>
+                        <p className="text-muted-foreground text-xs">
+                          Generate fake data
+                        </p>
+                      </NavigationMenuLink>
+                    </Link>
+                  </li>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
