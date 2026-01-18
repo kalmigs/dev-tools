@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
 import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
 import { Route as StringsCompareRouteImport } from './routes/strings/compare'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
@@ -18,6 +19,11 @@ import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidateIdsRoute = ValidateIdsRouteImport.update({
+  id: '/validate/ids',
+  path: '/validate/ids',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StringsJsonFormatRoute = StringsJsonFormatRouteImport.update({
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/generate/ids': typeof GenerateIdsRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
+  '/validate/ids': typeof ValidateIdsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/generate/ids': typeof GenerateIdsRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
+  '/validate/ids': typeof ValidateIdsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,6 +70,7 @@ export interface FileRoutesById {
   '/generate/ids': typeof GenerateIdsRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
+  '/validate/ids': typeof ValidateIdsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -71,6 +80,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/strings/compare'
     | '/strings/json-format'
+    | '/validate/ids'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -78,6 +88,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/strings/compare'
     | '/strings/json-format'
+    | '/validate/ids'
   id:
     | '__root__'
     | '/'
@@ -85,6 +96,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/strings/compare'
     | '/strings/json-format'
+    | '/validate/ids'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -93,6 +105,7 @@ export interface RootRouteChildren {
   GenerateIdsRoute: typeof GenerateIdsRoute
   StringsCompareRoute: typeof StringsCompareRoute
   StringsJsonFormatRoute: typeof StringsJsonFormatRoute
+  ValidateIdsRoute: typeof ValidateIdsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validate/ids': {
+      id: '/validate/ids'
+      path: '/validate/ids'
+      fullPath: '/validate/ids'
+      preLoaderRoute: typeof ValidateIdsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/strings/json-format': {
@@ -141,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenerateIdsRoute: GenerateIdsRoute,
   StringsCompareRoute: StringsCompareRoute,
   StringsJsonFormatRoute: StringsJsonFormatRoute,
+  ValidateIdsRoute: ValidateIdsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,5 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { Home, Fingerprint, Sparkles, FileJson, GitCompare, ChevronDown } from 'lucide-react'
+import { Home, Fingerprint, Sparkles, FileJson, GitCompare, ChevronDown, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -38,6 +38,15 @@ const generateItems = [
   },
 ]
 
+const validateItems = [
+  {
+    title: 'IDs',
+    url: '/validate/ids',
+    description: 'Validate ID formats',
+    icon: Fingerprint,
+  },
+]
+
 const stringItems = [
   {
     title: 'JSON Format',
@@ -60,6 +69,9 @@ export function AppSidebar() {
   
   const [generateOpen, setGenerateOpen] = useState(
     currentPath.startsWith('/generate')
+  )
+  const [validateOpen, setValidateOpen] = useState(
+    currentPath.startsWith('/validate')
   )
   const [stringsOpen, setStringsOpen] = useState(
     currentPath.startsWith('/strings')
@@ -112,6 +124,35 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {generateItems.map((item) => (
+                        <SidebarMenuSubItem key={item.url}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={currentPath === item.url}
+                          >
+                            <Link to={item.url} onClick={handleLinkClick}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              <Collapsible open={validateOpen} onOpenChange={setValidateOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      <ShieldCheck />
+                      <span>Validate</span>
+                      <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {validateItems.map((item) => (
                         <SidebarMenuSubItem key={item.url}>
                           <SidebarMenuSubButton
                             asChild

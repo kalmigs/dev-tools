@@ -76,6 +76,23 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
+            <NavigationMenuTrigger>Validate</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-48 gap-1 p-2">
+                <li>
+                  <Link to="/validate/ids">
+                    <NavigationMenuLink>
+                      <div className="font-medium">IDs</div>
+                      <p className="text-muted-foreground text-xs">
+                        Validate ID formats
+                      </p>
+                    </NavigationMenuLink>
+                  </Link>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
             <NavigationMenuTrigger>Strings</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-48 gap-1 p-2">
