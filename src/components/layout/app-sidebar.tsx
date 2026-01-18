@@ -1,80 +1,81 @@
-import { Link, useRouterState } from '@tanstack/react-router'
-import { Home, Fingerprint, Sparkles, FileJson, GitCompare, ChevronDown, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
-
+import { Link, useRouterState } from '@tanstack/react-router'
+import { ChevronDown, FileJson, Fingerprint, GitCompare, Home, ShieldCheck, Sparkles } from 'lucide-react'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader,
   SidebarMenuSub,
-  SidebarMenuSubItem,
   SidebarMenuSubButton,
+  SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
 
+// Constants
 const generateItems = [
   {
-    title: 'IDs',
-    url: '/generate/ids',
-    description: 'UUIDs, CUIDs, and more',
-    icon: Fingerprint,
-  },
-  {
-    title: 'Faker',
-    url: '/generate/faker',
     description: 'Generate fake data',
     icon: Sparkles,
+    title: 'Faker',
+    url: '/generate/faker',
   },
-]
-
-const validateItems = [
   {
-    title: 'IDs',
-    url: '/validate/ids',
-    description: 'Validate ID formats',
+    description: 'UUIDs, CUIDs, and more',
     icon: Fingerprint,
+    title: 'IDs',
+    url: '/generate/ids',
   },
 ]
 
 const stringItems = [
   {
-    title: 'JSON Format',
-    url: '/strings/json-format',
-    description: 'Format and prettify JSON',
-    icon: FileJson,
-  },
-  {
-    title: 'Compare',
-    url: '/strings/compare',
     description: 'Compare and diff text',
     icon: GitCompare,
+    title: 'Compare',
+    url: '/strings/compare',
+  },
+  {
+    description: 'Format and prettify JSON',
+    icon: FileJson,
+    title: 'JSON Format',
+    url: '/strings/json-format',
   },
 ]
 
+const validateItems = [
+  {
+    description: 'Validate ID formats',
+    icon: Fingerprint,
+    title: 'IDs',
+    url: '/validate/ids',
+  },
+]
+
+// Main component
 export function AppSidebar() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
   const { setOpenMobile } = useSidebar()
-  
+
   const [generateOpen, setGenerateOpen] = useState(
     currentPath.startsWith('/generate')
   )
-  const [validateOpen, setValidateOpen] = useState(
-    currentPath.startsWith('/validate')
-  )
   const [stringsOpen, setStringsOpen] = useState(
     currentPath.startsWith('/strings')
+  )
+  const [validateOpen, setValidateOpen] = useState(
+    currentPath.startsWith('/validate')
   )
 
   const handleLinkClick = () => {
@@ -141,18 +142,18 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               </Collapsible>
 
-              <Collapsible open={validateOpen} onOpenChange={setValidateOpen}>
+              <Collapsible open={stringsOpen} onOpenChange={setStringsOpen}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      <ShieldCheck />
-                      <span>Validate</span>
+                      <FileJson />
+                      <span>Strings</span>
                       <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {validateItems.map((item) => (
+                      {stringItems.map((item) => (
                         <SidebarMenuSubItem key={item.url}>
                           <SidebarMenuSubButton
                             asChild
@@ -170,18 +171,18 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               </Collapsible>
 
-              <Collapsible open={stringsOpen} onOpenChange={setStringsOpen}>
+              <Collapsible open={validateOpen} onOpenChange={setValidateOpen}>
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton>
-                      <FileJson />
-                      <span>Strings</span>
+                      <ShieldCheck />
+                      <span>Validate</span>
                       <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {stringItems.map((item) => (
+                      {validateItems.map((item) => (
                         <SidebarMenuSubItem key={item.url}>
                           <SidebarMenuSubButton
                             asChild

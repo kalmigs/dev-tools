@@ -1,41 +1,22 @@
+import { useEffect, useState } from 'react'
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useState, useEffect } from 'react'
-import { Sun, Moon } from 'lucide-react'
+import { Moon, Sun } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   NavigationMenu,
-  NavigationMenuList,
+  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
+  NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuContent,
 } from '@/components/ui/navigation-menu'
-import { Button } from '@/components/ui/button'
-import { NotFound } from '@/components/errors/not-found'
-import { useIsMobile } from '@/hooks/use-mobile'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { NotFound } from '@/components/errors/not-found'
 import { AppSidebar } from '@/components/layout/app-sidebar'
+import { useIsMobile } from '@/hooks/use-mobile'
 
-export const Route = createRootRoute({
-  component: RootLayout,
-  notFoundComponent: NotFound,
-})
-
-function ThemeToggle({ onClick }: { onClick: () => void }) {
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={onClick}
-      aria-label="Toggle theme"
-    >
-      <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  )
-}
-
+// Subcomponents
 function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
   return (
     <nav className="px-2 py-2 border-b border-border bg-card flex items-center justify-between">
@@ -54,6 +35,16 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
               <ul className="grid w-48 gap-1 p-2">
                 <li>
                   <NavigationMenuLink asChild>
+                    <Link to="/generate/faker">
+                      <div className="font-medium">Faker</div>
+                      <p className="text-muted-foreground text-xs">
+                        Generate fake data
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink asChild>
                     <Link to="/generate/ids">
                       <div className="font-medium">IDs</div>
                       <p className="text-muted-foreground text-xs">
@@ -62,12 +53,29 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                     </Link>
                   </NavigationMenuLink>
                 </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Strings</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-48 gap-1 p-2">
                 <li>
                   <NavigationMenuLink asChild>
-                    <Link to="/generate/faker">
-                      <div className="font-medium">Faker</div>
+                    <Link to="/strings/compare">
+                      <div className="font-medium">Compare</div>
                       <p className="text-muted-foreground text-xs">
-                        Generate fake data
+                        Compare and diff text
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+                <li>
+                  <NavigationMenuLink asChild>
+                    <Link to="/strings/json-format">
+                      <div className="font-medium">JSON Format</div>
+                      <p className="text-muted-foreground text-xs">
+                        Format and prettify JSON
                       </p>
                     </Link>
                   </NavigationMenuLink>
@@ -85,33 +93,6 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                       <div className="font-medium">IDs</div>
                       <p className="text-muted-foreground text-xs">
                         Validate ID formats
-                      </p>
-                    </Link>
-                  </NavigationMenuLink>
-                </li>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Strings</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-48 gap-1 p-2">
-                <li>
-                  <NavigationMenuLink asChild>
-                    <Link to="/strings/json-format">
-                      <div className="font-medium">JSON Format</div>
-                      <p className="text-muted-foreground text-xs">
-                        Format and prettify JSON
-                      </p>
-                    </Link>
-                  </NavigationMenuLink>
-                </li>
-                <li>
-                  <NavigationMenuLink asChild>
-                    <Link to="/strings/compare">
-                      <div className="font-medium">Compare</div>
-                      <p className="text-muted-foreground text-xs">
-                        Compare and diff text
                       </p>
                     </Link>
                   </NavigationMenuLink>
@@ -141,6 +122,22 @@ function MobileNav({ onToggleTheme }: { onToggleTheme: () => void }) {
   )
 }
 
+function ThemeToggle({ onClick }: { onClick: () => void }) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={onClick}
+      aria-label="Toggle theme"
+    >
+      <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+      <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+
+// Main component
 function RootLayout() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
@@ -189,3 +186,9 @@ function RootLayout() {
     </div>
   )
 }
+
+// Route export
+export const Route = createRootRoute({
+  component: RootLayout,
+  notFoundComponent: NotFound,
+})

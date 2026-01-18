@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v6 as uuidv6, v7 as uuidv7 } from 'uuid'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 // @ts-expect-error - @bugsnag/cuid has type export issues
 import cuid from '@bugsnag/cuid'
-import { createId as cuid2 } from '@paralleldrive/cuid2'
 import { nanoid } from 'nanoid'
+import { createId as cuid2 } from '@paralleldrive/cuid2'
+import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v6 as uuidv6, v7 as uuidv7 } from 'uuid'
+import { CheckIcon, CopyIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { NumberInput } from '@/components/ui/number-input'
 import {
@@ -16,79 +17,80 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { CheckIcon, CopyIcon } from 'lucide-react'
 
-interface SearchParams {
-  type?: IdType
-  count?: number
-  uuidVersion?: UuidVersion
-  nanoidLength?: number
-}
-
-export const Route = createFileRoute('/generate/ids')({
-  component: IdsPage,
-  validateSearch: (search: Record<string, unknown>): SearchParams => {
-    const validTypes: IdType[] = ['uuid', 'cuid', 'cuid2', 'nanoid']
-    const validUuidVersions: UuidVersion[] = ['v1', 'v3', 'v4', 'v5', 'v6', 'v7']
-    
-    return {
-      type: validTypes.includes(search.type as IdType) ? (search.type as IdType) : undefined,
-      count: typeof search.count === 'number' && search.count >= 1 && search.count <= 100 
-        ? search.count 
-        : typeof search.count === 'string' && !isNaN(Number(search.count))
-          ? Math.min(100, Math.max(1, Number(search.count)))
-          : undefined,
-      uuidVersion: validUuidVersions.includes(search.uuidVersion as UuidVersion) 
-        ? (search.uuidVersion as UuidVersion) 
-        : undefined,
-      nanoidLength: typeof search.nanoidLength === 'number' && search.nanoidLength >= 1 && search.nanoidLength <= 256
-        ? search.nanoidLength
-        : typeof search.nanoidLength === 'string' && !isNaN(Number(search.nanoidLength))
-          ? Math.min(256, Math.max(1, Number(search.nanoidLength)))
-          : undefined,
-    }
-  },
-})
-
-type IdType = 'uuid' | 'cuid' | 'cuid2' | 'nanoid'
+// Types
+type IdType = 'cuid' | 'cuid2' | 'nanoid' | 'uuid'
 type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7'
 
 interface IdTypeOptions {
-  uuid: { version: UuidVersion }
   nanoid: { length?: number }
+  uuid: { version: UuidVersion }
 }
 
+interface InputControlsProps {
+  count: number
+  idType: IdType
+  onCountChange: (count: number) => void
+  onGenerate: () => void
+  onIdTypeChange: (type: IdType) => void
+  onOptionsChange: (options: IdTypeOptions) => void
+  options: IdTypeOptions
+}
 
-const ID_TYPE_OPTIONS: { value: IdType; label: string; description: string }[] = [
-  { value: 'uuid', label: 'UUID', description: 'Universally Unique Identifier' },
-  { value: 'cuid', label: 'CUID', description: 'Collision-resistant ID' },
-  { value: 'cuid2', label: 'CUID2', description: 'Next generation CUID' },
-  { value: 'nanoid', label: 'Nanoid', description: 'Tiny, secure, URL-friendly' },
+interface OutputSectionProps {
+  copiedAll: boolean
+  copiedIndex: number | null
+  generatedIds: string[]
+  onCopyAll: () => void
+  onCopySingle: (id: string, index: number) => void
+}
+
+interface SearchParams {
+  count?: number
+  nanoidLength?: number
+  type?: IdType
+  uuidVersion?: UuidVersion
+}
+
+// Constants
+const ID_TYPE_OPTIONS: { description: string; label: string; value: IdType }[] = [
+  { description: 'Collision-resistant ID', label: 'CUID', value: 'cuid' },
+  { description: 'Next generation CUID', label: 'CUID2', value: 'cuid2' },
+  { description: 'Tiny, secure, URL-friendly', label: 'Nanoid', value: 'nanoid' },
+  { description: 'Universally Unique Identifier', label: 'UUID', value: 'uuid' },
 ]
 
-const UUID_VERSION_OPTIONS: { value: UuidVersion; label: string }[] = [
-  { value: 'v1', label: 'v1 (Timestamp)' },
-  { value: 'v3', label: 'v3 (MD5 Namespace)' },
-  { value: 'v4', label: 'v4 (Random)' },
-  { value: 'v5', label: 'v5 (SHA-1 Namespace)' },
-  { value: 'v6', label: 'v6 (Reordered Time)' },
-  { value: 'v7', label: 'v7 (Unix Epoch)' },
-]
-
-// Namespace for v3/v5 UUIDs (using URL namespace)
 const UUID_NAMESPACE = '6ba7b811-9dad-11d1-80b4-00c04fd430c8'
 
+const UUID_VERSION_OPTIONS: { label: string; value: UuidVersion }[] = [
+  { label: 'v1 (Timestamp)', value: 'v1' },
+  { label: 'v3 (MD5 Namespace)', value: 'v3' },
+  { label: 'v4 (Random)', value: 'v4' },
+  { label: 'v5 (SHA-1 Namespace)', value: 'v5' },
+  { label: 'v6 (Reordered Time)', value: 'v6' },
+  { label: 'v7 (Unix Epoch)', value: 'v7' },
+]
+
+// Helper functions
 function generateId(type: IdType, options: IdTypeOptions): string {
   switch (type) {
-    case 'uuid':
-      return generateUuid(options.uuid.version)
     case 'cuid':
       return cuid()
     case 'cuid2':
       return cuid2()
     case 'nanoid':
       return nanoid(options.nanoid.length)
+    case 'uuid':
+      return generateUuid(options.uuid.version)
   }
+}
+
+function generateInitialIds(type: IdType, options: IdTypeOptions, count: number): string[] {
+  const ids: string[] = []
+  for (let i = 0; i < count; i++) {
+    ids.push(generateId(type, options))
+  }
+  return ids
 }
 
 function generateUuid(version: UuidVersion): string {
@@ -108,24 +110,15 @@ function generateUuid(version: UuidVersion): string {
   }
 }
 
-interface InputControlsProps {
-  idType: IdType
-  options: IdTypeOptions
-  count: number
-  onIdTypeChange: (type: IdType) => void
-  onOptionsChange: (options: IdTypeOptions) => void
-  onCountChange: (count: number) => void
-  onGenerate: () => void
-}
-
+// Subcomponents
 function InputControls({
-  idType,
-  options,
   count,
-  onIdTypeChange,
-  onOptionsChange,
+  idType,
   onCountChange,
   onGenerate,
+  onIdTypeChange,
+  onOptionsChange,
+  options,
 }: InputControlsProps) {
   return (
     <div className="flex flex-col gap-6">
@@ -216,18 +209,10 @@ function InputControls({
   )
 }
 
-interface OutputSectionProps {
-  generatedIds: string[]
-  copiedAll: boolean
-  copiedIndex: number | null
-  onCopyAll: () => void
-  onCopySingle: (id: string, index: number) => void
-}
-
 function OutputSection({
-  generatedIds,
   copiedAll,
   copiedIndex,
+  generatedIds,
   onCopyAll,
   onCopySingle,
 }: OutputSectionProps) {
@@ -295,37 +280,29 @@ function OutputSection({
   )
 }
 
-// Helper to generate initial IDs
-function generateInitialIds(type: IdType, options: IdTypeOptions, count: number): string[] {
-  const ids: string[] = []
-  for (let i = 0; i < count; i++) {
-    ids.push(generateId(type, options))
-  }
-  return ids
-}
-
+// Main component
 function IdsPage() {
   const isMobile = useIsMobile()
   const navigate = useNavigate({ from: '/generate/ids' })
   const search = Route.useSearch()
-  
+
   // Initialize state from search params or defaults
   const initialType = search.type ?? 'uuid'
   const initialOptions: IdTypeOptions = {
-    uuid: { version: search.uuidVersion ?? 'v4' },
     nanoid: { length: search.nanoidLength },
+    uuid: { version: search.uuidVersion ?? 'v4' },
   }
   const initialCount = search.count ?? 1
 
-  const [idType, setIdType] = useState<IdType>(initialType)
-  const [options, setOptions] = useState<IdTypeOptions>(initialOptions)
-  const [count, setCount] = useState<number>(initialCount)
-  const [generatedIds, setGeneratedIds] = useState<string[]>(() => 
-    generateInitialIds(initialType, initialOptions, initialCount)
-  )
+  const [activeTab, setActiveTab] = useState('input')
   const [copiedAll, setCopiedAll] = useState(false)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-  const [activeTab, setActiveTab] = useState('input')
+  const [count, setCount] = useState<number>(initialCount)
+  const [generatedIds, setGeneratedIds] = useState<string[]>(() =>
+    generateInitialIds(initialType, initialOptions, initialCount)
+  )
+  const [idType, setIdType] = useState<IdType>(initialType)
+  const [options, setOptions] = useState<IdTypeOptions>(initialOptions)
 
   // Update URL when settings change
   const updateSearchParams = (updates: Partial<SearchParams>) => {
@@ -338,17 +315,16 @@ function IdsPage() {
     })
   }
 
-  const handleIdTypeChange = (type: IdType) => {
-    setIdType(type)
-    updateSearchParams({ type })
+  const handleCopyAll = async () => {
+    await navigator.clipboard.writeText(generatedIds.join('\n'))
+    setCopiedAll(true)
+    setTimeout(() => setCopiedAll(false), 2000)
   }
 
-  const handleOptionsChange = (newOptions: IdTypeOptions) => {
-    setOptions(newOptions)
-    updateSearchParams({
-      uuidVersion: newOptions.uuid.version,
-      nanoidLength: newOptions.nanoid.length,
-    })
+  const handleCopySingle = async (id: string, index: number) => {
+    await navigator.clipboard.writeText(id)
+    setCopiedIndex(index)
+    setTimeout(() => setCopiedIndex(null), 2000)
   }
 
   const handleCountChange = (newCount: number) => {
@@ -370,17 +346,17 @@ function IdsPage() {
     }
   }
 
-
-  const handleCopyAll = async () => {
-    await navigator.clipboard.writeText(generatedIds.join('\n'))
-    setCopiedAll(true)
-    setTimeout(() => setCopiedAll(false), 2000)
+  const handleIdTypeChange = (type: IdType) => {
+    setIdType(type)
+    updateSearchParams({ type })
   }
 
-  const handleCopySingle = async (id: string, index: number) => {
-    await navigator.clipboard.writeText(id)
-    setCopiedIndex(index)
-    setTimeout(() => setCopiedIndex(null), 2000)
+  const handleOptionsChange = (newOptions: IdTypeOptions) => {
+    setOptions(newOptions)
+    updateSearchParams({
+      nanoidLength: newOptions.nanoid.length,
+      uuidVersion: newOptions.uuid.version,
+    })
   }
 
   // Mobile Layout with Tabs
@@ -393,20 +369,20 @@ function IdsPage() {
         </TabsList>
         <TabsContent value="input" className="flex-1 pt-4">
           <InputControls
-            idType={idType}
-            options={options}
             count={count}
-            onIdTypeChange={handleIdTypeChange}
-            onOptionsChange={handleOptionsChange}
+            idType={idType}
             onCountChange={handleCountChange}
             onGenerate={handleGenerate}
+            onIdTypeChange={handleIdTypeChange}
+            onOptionsChange={handleOptionsChange}
+            options={options}
           />
         </TabsContent>
         <TabsContent value="output" className="flex-1 pt-4 min-h-0 overflow-auto max-h-[calc(100vh-8.5rem)] max-w-[calc(100vw-2rem)]">
           <OutputSection
-            generatedIds={generatedIds}
             copiedAll={copiedAll}
             copiedIndex={copiedIndex}
+            generatedIds={generatedIds}
             onCopyAll={handleCopyAll}
             onCopySingle={handleCopySingle}
           />
@@ -421,22 +397,22 @@ function IdsPage() {
       {/* Left - Input Controls */}
       <div className="w-[250px] shrink-0">
         <InputControls
-          idType={idType}
-          options={options}
           count={count}
-          onIdTypeChange={handleIdTypeChange}
-          onOptionsChange={handleOptionsChange}
+          idType={idType}
           onCountChange={handleCountChange}
           onGenerate={handleGenerate}
+          onIdTypeChange={handleIdTypeChange}
+          onOptionsChange={handleOptionsChange}
+          options={options}
         />
       </div>
 
       {/* Right - Output */}
       <div className="flex-1 min-w-0 max-h-[calc(100vh-6rem)] overflow-y-auto">
         <OutputSection
-          generatedIds={generatedIds}
           copiedAll={copiedAll}
           copiedIndex={copiedIndex}
+          generatedIds={generatedIds}
           onCopyAll={handleCopyAll}
           onCopySingle={handleCopySingle}
         />
@@ -444,3 +420,29 @@ function IdsPage() {
     </div>
   )
 }
+
+// Route export
+export const Route = createFileRoute('/generate/ids')({
+  component: IdsPage,
+  validateSearch: (search: Record<string, unknown>): SearchParams => {
+    const validTypes: IdType[] = ['cuid', 'cuid2', 'nanoid', 'uuid']
+    const validUuidVersions: UuidVersion[] = ['v1', 'v3', 'v4', 'v5', 'v6', 'v7']
+
+    return {
+      count: typeof search.count === 'number' && search.count >= 1 && search.count <= 100
+        ? search.count
+        : typeof search.count === 'string' && !isNaN(Number(search.count))
+          ? Math.min(100, Math.max(1, Number(search.count)))
+          : undefined,
+      nanoidLength: typeof search.nanoidLength === 'number' && search.nanoidLength >= 1 && search.nanoidLength <= 256
+        ? search.nanoidLength
+        : typeof search.nanoidLength === 'string' && !isNaN(Number(search.nanoidLength))
+          ? Math.min(256, Math.max(1, Number(search.nanoidLength)))
+          : undefined,
+      type: validTypes.includes(search.type as IdType) ? (search.type as IdType) : undefined,
+      uuidVersion: validUuidVersions.includes(search.uuidVersion as UuidVersion)
+        ? (search.uuidVersion as UuidVersion)
+        : undefined,
+    }
+  },
+})

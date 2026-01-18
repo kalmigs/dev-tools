@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
-import { validate as uuidValidate, version as uuidVersion } from 'uuid'
 import { isCuid as isCuid2 } from '@paralleldrive/cuid2'
+import { validate as uuidValidate, version as uuidVersion } from 'uuid'
 import { CheckIcon, XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 
 // Types
 interface ValidationResult {
+  details?: string
   type: string
   valid: boolean
-  details?: string
 }
 
 // Helper functions
@@ -27,22 +27,6 @@ function validateId(input: string): ValidationResult[] {
 
   const results: ValidationResult[] = []
 
-  // UUID validation
-  const isValidUuid = uuidValidate(trimmed)
-  if (isValidUuid) {
-    const version = uuidVersion(trimmed)
-    results.push({
-      type: 'UUID',
-      valid: true,
-      details: `Version ${version}`,
-    })
-  } else {
-    results.push({
-      type: 'UUID',
-      valid: false,
-    })
-  }
-
   // CUID validation
   const isValidCuid = isCuid(trimmed)
   results.push({
@@ -57,6 +41,22 @@ function validateId(input: string): ValidationResult[] {
     valid: isValidCuid2,
   })
 
+  // UUID validation
+  const isValidUuid = uuidValidate(trimmed)
+  if (isValidUuid) {
+    const version = uuidVersion(trimmed)
+    results.push({
+      details: `Version ${version}`,
+      type: 'UUID',
+      valid: true,
+    })
+  } else {
+    results.push({
+      type: 'UUID',
+      valid: false,
+    })
+  }
+
   return results
 }
 
@@ -64,8 +64,8 @@ function validateId(input: string): ValidationResult[] {
 function ValidateIdsPage() {
   const [input, setInput] = useState('')
   const results = validateId(input)
-  const hasInput = input.trim().length > 0
   const hasAnyValid = results.some((r) => r.valid)
+  const hasInput = input.trim().length > 0
 
   return (
     <div className="h-full flex flex-col items-center pt-8 md:pt-16">
