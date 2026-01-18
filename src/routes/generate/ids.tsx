@@ -402,7 +402,7 @@ function IdsPage() {
             onGenerate={handleGenerate}
           />
         </TabsContent>
-        <TabsContent value="output" className="flex-1 pt-4 min-h-0 overflow-y-auto max-h-[calc(100vh-8.5rem)]">
+        <TabsContent value="output" className="flex-1 pt-4 min-h-0 overflow-auto max-h-[calc(100vh-8.5rem)] max-w-[calc(100vw-2rem)]">
           <OutputSection
             generatedIds={generatedIds}
             copiedAll={copiedAll}
