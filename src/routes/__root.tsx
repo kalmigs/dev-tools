@@ -123,8 +123,11 @@ function MobileNav({ onToggleTheme }: { onToggleTheme: () => void }) {
     <nav className="px-2 py-2 border-b border-border bg-card flex items-center justify-between">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
-        <Link to="/" className="font-semibold text-lg">
-          Dev Tools
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xs">
+            DT
+          </div>
+          <span className="font-semibold text-lg">Dev Tools</span>
         </Link>
       </div>
       <ThemeToggle onClick={onToggleTheme} />
