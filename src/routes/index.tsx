@@ -6,6 +6,7 @@ import {
   FileJson,
   Fingerprint,
   GitCompare,
+  ImageIcon,
   Sparkles,
   ShieldCheck,
 } from 'lucide-react';
@@ -29,6 +30,13 @@ const generateTools = [
     icon: Fingerprint,
     url: '/generate/ids',
     color: 'from-lime-500 to-green-600',
+  },
+  {
+    title: 'Image',
+    description: 'Colors, gradients, and patterns',
+    icon: ImageIcon,
+    url: '/generate/image',
+    color: 'from-violet-500 to-purple-600',
   },
   {
     title: 'JSON',

@@ -27,60 +27,34 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useIsMobile } from '@/hooks/use-mobile';
 
 // Types
-type StringStyle = 'words' | 'realistic' | 'lorem';
-type KeyStyle = 'camelCase' | 'snake_case' | 'words';
 type Indentation = '2' | '4' | 'tab' | 'minified';
+type KeyStyle = 'camelCase' | 'snake_case' | 'words';
+type StringStyle = 'lorem' | 'realistic' | 'words';
 
 interface RandomJsonConfig {
   // Structure
-  numKeys: number;
   maxDepth: number;
-
+  numKeys: number;
   // Probabilities (0-100)
   arrayProbability: number;
-  objectProbability: number;
   nullProbability: number;
-
+  objectProbability: number;
   // Arrays
-  arrayMinLength: number;
   arrayMaxLength: number;
-
+  arrayMinLength: number;
   // Strings
   stringStyle: StringStyle;
-
   // Keys
   keyStyle: KeyStyle;
-
   // Numbers
-  numberMin: number;
-  numberMax: number;
   includeFloats: boolean;
-
+  numberMax: number;
+  numberMin: number;
   // Output
   count: number;
   indentation: Indentation;
-
   // Advanced
   seed: string;
-}
-
-interface SearchParams {
-  numKeys?: number;
-  maxDepth?: number;
-  arrayProbability?: number;
-  objectProbability?: number;
-  nullProbability?: number;
-  arrayMinLength?: number;
-  arrayMaxLength?: number;
-  stringStyle?: StringStyle;
-  keyStyle?: KeyStyle;
-  numberMin?: number;
-  numberMax?: number;
-  includeFloats?: boolean;
-  count?: number;
-  indentation?: Indentation;
-  seed?: string;
-  advancedMode?: boolean;
 }
 
 interface ControlGroupProps {
@@ -96,6 +70,25 @@ interface SliderInputProps {
   onChange: (value: number) => void;
   suffix?: string;
   value: number;
+}
+
+interface SearchParams {
+  advancedMode?: boolean;
+  arrayMaxLength?: number;
+  arrayMinLength?: number;
+  arrayProbability?: number;
+  count?: number;
+  includeFloats?: boolean;
+  indentation?: Indentation;
+  keyStyle?: KeyStyle;
+  maxDepth?: number;
+  nullProbability?: number;
+  numberMax?: number;
+  numberMin?: number;
+  numKeys?: number;
+  objectProbability?: number;
+  seed?: string;
+  stringStyle?: StringStyle;
 }
 
 // Constants
@@ -126,7 +119,7 @@ const VALUE_COLORS = {
   punctuation: 'text-muted-foreground',
 } as const;
 
-// Helper: Generate random key based on style
+// Helper functions
 function generateKey(style: KeyStyle, usedKeys: Set<string>): string {
   let key: string;
   let attempts = 0;
@@ -155,7 +148,6 @@ function generateKey(style: KeyStyle, usedKeys: Set<string>): string {
   return key;
 }
 
-// Helper: Generate random primitive value
 function generatePrimitiveValue(config: RandomJsonConfig): unknown {
   // Check for null
   if (Math.random() * 100 < config.nullProbability) {
@@ -181,7 +173,6 @@ function generatePrimitiveValue(config: RandomJsonConfig): unknown {
   }
 }
 
-// Helper: Generate string value based on style
 function generateStringValue(style: StringStyle): string {
   switch (style) {
     case 'realistic': {
@@ -207,7 +198,6 @@ function generateStringValue(style: StringStyle): string {
   }
 }
 
-// Helper: Generate random array
 function generateRandomArray(
   config: RandomJsonConfig,
   currentDepth: number,
@@ -225,7 +215,6 @@ function generateRandomArray(
   return arr;
 }
 
-// Helper: Generate random value (primitive, object, or array)
 function generateRandomValue(
   config: RandomJsonConfig,
   currentDepth: number,
@@ -248,7 +237,6 @@ function generateRandomValue(
   return generatePrimitiveValue(config);
 }
 
-// Main: Generate random JSON object
 function generateRandomObject(
   config: RandomJsonConfig,
   currentDepth: number = 0,
@@ -271,7 +259,6 @@ function generateRandomObject(
   return obj;
 }
 
-// Main: Generate JSON with seed support
 function generateJson(config: RandomJsonConfig): unknown {
   // Set seed if provided
   if (config.seed.trim()) {
@@ -291,7 +278,6 @@ function generateJson(config: RandomJsonConfig): unknown {
   return results;
 }
 
-// Helper: Simple hash function for seed
 function hashCode(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -302,7 +288,6 @@ function hashCode(str: string): number {
   return Math.abs(hash);
 }
 
-// Helper: Format JSON string
 function formatJson(data: unknown, indentation: Indentation): string {
   if (indentation === 'minified') {
     return JSON.stringify(data);

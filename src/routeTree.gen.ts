@@ -14,6 +14,7 @@ import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
 import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
 import { Route as StringsCompareRouteImport } from './routes/strings/compare'
 import { Route as GenerateJsonRouteImport } from './routes/generate/json'
+import { Route as GenerateImageRouteImport } from './routes/generate/image'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
 import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
 
@@ -42,6 +43,11 @@ const GenerateJsonRoute = GenerateJsonRouteImport.update({
   path: '/generate/json',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenerateImageRoute = GenerateImageRouteImport.update({
+  id: '/generate/image',
+  path: '/generate/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenerateIdsRoute = GenerateIdsRouteImport.update({
   id: '/generate/ids',
   path: '/generate/ids',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
+  '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/generate/faker'
     | '/generate/ids'
+    | '/generate/image'
     | '/generate/json'
     | '/strings/compare'
     | '/strings/json-format'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/generate/faker'
     | '/generate/ids'
+    | '/generate/image'
     | '/generate/json'
     | '/strings/compare'
     | '/strings/json-format'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/generate/faker'
     | '/generate/ids'
+    | '/generate/image'
     | '/generate/json'
     | '/strings/compare'
     | '/strings/json-format'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GenerateFakerRoute: typeof GenerateFakerRoute
   GenerateIdsRoute: typeof GenerateIdsRoute
+  GenerateImageRoute: typeof GenerateImageRoute
   GenerateJsonRoute: typeof GenerateJsonRoute
   StringsCompareRoute: typeof StringsCompareRoute
   StringsJsonFormatRoute: typeof StringsJsonFormatRoute
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenerateJsonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generate/image': {
+      id: '/generate/image'
+      path: '/generate/image'
+      fullPath: '/generate/image'
+      preLoaderRoute: typeof GenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generate/ids': {
       id: '/generate/ids'
       path: '/generate/ids'
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GenerateFakerRoute: GenerateFakerRoute,
   GenerateIdsRoute: GenerateIdsRoute,
+  GenerateImageRoute: GenerateImageRoute,
   GenerateJsonRoute: GenerateJsonRoute,
   StringsCompareRoute: StringsCompareRoute,
   StringsJsonFormatRoute: StringsJsonFormatRoute,

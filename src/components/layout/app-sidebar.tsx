@@ -7,6 +7,7 @@ import {
   Fingerprint,
   GitCompare,
   Home,
+  ImageIcon,
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
@@ -40,6 +41,12 @@ const generateItems = [
     icon: Fingerprint,
     title: 'IDs',
     url: '/generate/ids',
+  },
+  {
+    description: 'Colors, gradients, patterns',
+    icon: ImageIcon,
+    title: 'Image',
+    url: '/generate/image',
   },
   {
     description: 'Random JSON structures',

@@ -51,6 +51,14 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                   </li>
                   <li>
                     <NavigationMenuLink asChild>
+                      <Link to="/generate/image">
+                        <div className="font-medium">Image</div>
+                        <p className="text-muted-foreground text-xs">Colors, gradients, patterns</p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
                       <Link to="/generate/json">
                         <div className="font-medium">JSON</div>
                         <p className="text-muted-foreground text-xs">Random JSON structures</p>
