@@ -1,14 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
+  ArrowDownIcon,
+  ArrowDownLeftIcon,
+  ArrowDownRightIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpIcon,
+  ArrowUpLeftIcon,
+  ArrowUpRightIcon,
   CheckIcon,
   ChevronsUpDownIcon,
+  CircleIcon,
   ClipboardIcon,
   DownloadIcon,
   PlusIcon,
   ShuffleIcon,
   XIcon,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -122,16 +132,16 @@ const PATTERN_OPTIONS: { label: string; value: PatternType }[] = [
   { label: 'Noise', value: 'noise' },
 ];
 
-const DIRECTION_ANGLES: { angle: number; icon: string }[] = [
-  { angle: 315, icon: '↖' },
-  { angle: 0, icon: '↑' },
-  { angle: 45, icon: '↗' },
-  { angle: 270, icon: '←' },
-  { angle: -1, icon: '●' }, // Custom
-  { angle: 90, icon: '→' },
-  { angle: 225, icon: '↙' },
-  { angle: 180, icon: '↓' },
-  { angle: 135, icon: '↘' },
+const DIRECTION_ANGLES: { angle: number; icon: React.ReactNode }[] = [
+  { angle: 315, icon: <ArrowUpLeftIcon className="size-4" /> },
+  { angle: 0, icon: <ArrowUpIcon className="size-4" /> },
+  { angle: 45, icon: <ArrowUpRightIcon className="size-4" /> },
+  { angle: 270, icon: <ArrowLeftIcon className="size-4" /> },
+  { angle: -1, icon: <CircleIcon className="size-3" /> }, // Custom
+  { angle: 90, icon: <ArrowRightIcon className="size-4" /> },
+  { angle: 225, icon: <ArrowDownLeftIcon className="size-4" /> },
+  { angle: 180, icon: <ArrowDownIcon className="size-4" /> },
+  { angle: 135, icon: <ArrowDownRightIcon className="size-4" /> },
 ];
 
 // Helper functions
@@ -490,10 +500,10 @@ function DirectionGrid({ customAngle, isCustom, onAngleChange, selectedAngle }: 
           const isSelected = angle === -1 ? isCustom : !isCustom && selectedAngle === angle;
           return (
             <Button
-              key={icon}
+              key={angle}
               variant={isSelected ? 'default' : 'outline'}
               size="sm"
-              className="size-9 p-0 text-base"
+              className="size-9 p-0"
               onClick={() => {
                 if (angle === -1) {
                   onAngleChange(customAngle, true);
@@ -915,6 +925,7 @@ interface OutputSectionProps {
   gradientAngle: number;
   gradientColors: ColorStop[];
   height: number;
+  isMobile: boolean;
   onCopy: () => void;
   onDownload: () => void;
   onFormatChange: (format: ImageFormat) => void;
@@ -931,6 +942,7 @@ function OutputSection({
   gradientAngle,
   gradientColors,
   height,
+  isMobile,
   onCopy,
   onDownload,
   onFormatChange,
@@ -954,8 +966,9 @@ function OutputSection({
   };
 
   // Calculate display dimensions maintaining aspect ratio
-  const maxDisplayWidth = 600;
-  const maxDisplayHeight = 400;
+  // Use smaller max dimensions on mobile to fit the viewport
+  const maxDisplayWidth = isMobile ? 320 : 600;
+  const maxDisplayHeight = isMobile ? 280 : 400;
   const aspectRatio = width / height;
 
   let displayWidth: number;
@@ -1007,7 +1020,7 @@ function OutputSection({
               </SelectContent>
             </Select>
 
-            <Button variant="outline" size="sm" onClick={onCopy} className="gap-2">
+            <Button variant="outline" size="sm" onClick={onCopy} className="gap-2 w-[88px]">
               {copied ? (
                 <>
                   <CheckIcon className="size-4 text-green-500" />
@@ -1361,6 +1374,14 @@ function ImagePage() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Check if clipboard API with ClipboardItem is supported
+    if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined') {
+      toast.error('Copying images is not supported in this browser', {
+        description: 'Please use the Download button instead.',
+      });
+      return;
+    }
+
     try {
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
       if (!blob) return;
@@ -1370,6 +1391,9 @@ function ImagePage() {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+      toast.error('Failed to copy image', {
+        description: 'This feature may not be supported in your browser. Please use the Download button instead.',
+      });
     }
   };
 
@@ -1439,6 +1463,7 @@ function ImagePage() {
             gradientAngle={gradientAngle}
             gradientColors={gradientColors}
             height={height}
+            isMobile={true}
             onCopy={handleCopy}
             onDownload={handleDownload}
             onFormatChange={handleFormatChange}
@@ -1507,6 +1532,7 @@ function ImagePage() {
           gradientAngle={gradientAngle}
           gradientColors={gradientColors}
           height={height}
+          isMobile={false}
           onCopy={handleCopy}
           onDownload={handleDownload}
           onFormatChange={handleFormatChange}

@@ -12,6 +12,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/sonner';
 import { NotFound } from '@/components/errors/not-found';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -174,6 +175,7 @@ function RootLayout() {
             <Outlet />
           </main>
         </div>
+        <Toaster />
         <TanStackRouterDevtools />
       </SidebarProvider>
     );
@@ -186,6 +188,7 @@ function RootLayout() {
       <main className="flex-1 p-6">
         <Outlet />
       </main>
+      <Toaster />
       <TanStackRouterDevtools />
     </div>
   );
