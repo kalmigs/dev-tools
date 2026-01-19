@@ -202,7 +202,7 @@ function InputControls({
       )}
 
       {/* Generate Button */}
-      <Button onClick={onGenerate} className="w-fit">
+      <Button onClick={onGenerate} className="w-fit gap-2">
         <ShuffleIcon className="size-4" />
         Generate
       </Button>

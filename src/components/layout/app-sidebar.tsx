@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
-import { ChevronDown, FileJson, Fingerprint, GitCompare, Home, ShieldCheck, Sparkles } from 'lucide-react'
+import { Braces, ChevronDown, FileJson, Fingerprint, GitCompare, Home, ShieldCheck, Sparkles } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
@@ -35,6 +35,12 @@ const generateItems = [
     icon: Fingerprint,
     title: 'IDs',
     url: '/generate/ids',
+  },
+  {
+    description: 'Random JSON structures',
+    icon: Braces,
+    title: 'JSON',
+    url: '/generate/json',
   },
 ]
 
