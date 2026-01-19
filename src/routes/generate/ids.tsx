@@ -149,7 +149,7 @@ function InputControls({
         <div className="w-[100px]">
           <NumberInput
             value={count}
-            onValueChange={(v) => onCountChange(v ?? 1)}
+            onValueChange={(v) => onCountChange(v ?? 10)}
             min={1}
             max={100}
             stepper={1}
@@ -293,7 +293,7 @@ function IdsPage() {
     nanoid: { length: search.nanoidLength },
     uuid: { version: search.uuidVersion ?? 'v4' },
   }
-  const initialCount = search.count ?? 1
+  const initialCount = search.count ?? 10
 
   const [activeTab, setActiveTab] = useState('input')
   const [copiedAll, setCopiedAll] = useState(false)

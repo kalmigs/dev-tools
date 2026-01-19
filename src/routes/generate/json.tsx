@@ -108,7 +108,7 @@ const DEFAULT_CONFIG: RandomJsonConfig = {
   arrayMinLength: 1,
   arrayMaxLength: 4,
   stringStyle: 'words',
-  keyStyle: 'camelCase',
+  keyStyle: 'snake_case',
   numberMin: 0,
   numberMax: 1000,
   includeFloats: true,

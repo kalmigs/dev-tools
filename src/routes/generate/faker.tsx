@@ -431,7 +431,7 @@ function FakerPage() {
   // Initialize state from search params or defaults
   const initialCategory = search.category ?? 'person'
   const initialDataType = search.type ?? getDefaultDataType(initialCategory)
-  const initialCount = search.count ?? 5
+  const initialCount = search.count ?? 10
   const initialOptions: DataTypeOptions = {
     lorem: {
       paragraphSentences: search.paragraphSentences ?? 3,
