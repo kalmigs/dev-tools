@@ -4,8 +4,7 @@ import { NumericFormat, type NumericFormatProps } from 'react-number-format';
 import { Button } from './button';
 import { Input } from './input';
 
-export interface NumberInputProps
-  extends Omit<NumericFormatProps, 'value' | 'onValueChange'> {
+export interface NumberInputProps extends Omit<NumericFormatProps, 'value' | 'onValueChange'> {
   stepper?: number;
   thousandSeparator?: string;
   placeholder?: string;
@@ -37,7 +36,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       value: controlledValue,
       ...props
     },
-    ref
+    ref,
   ) => {
     const internalRef = useRef<HTMLInputElement>(null); // Create an internal ref
     const combinedRef = ref || internalRef; // Use provided ref or internal ref
@@ -48,7 +47,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     const value = isControlled ? controlledValue : internalValue;
 
     const handleIncrement = useCallback(() => {
-      const newValue = value === undefined ? stepper ?? 1 : Math.min(value + (stepper ?? 1), max);
+      const newValue = value === undefined ? (stepper ?? 1) : Math.min(value + (stepper ?? 1), max);
       if (!isControlled) {
         setInternalValue(newValue);
       }
@@ -56,7 +55,8 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     }, [value, stepper, max, isControlled, onValueChange]);
 
     const handleDecrement = useCallback(() => {
-      const newValue = value === undefined ? -(stepper ?? 1) : Math.max(value - (stepper ?? 1), min);
+      const newValue =
+        value === undefined ? -(stepper ?? 1) : Math.max(value - (stepper ?? 1), min);
       if (!isControlled) {
         setInternalValue(newValue);
       }
@@ -65,10 +65,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (
-          document.activeElement ===
-          (combinedRef as React.RefObject<HTMLInputElement>).current
-        ) {
+        if (document.activeElement === (combinedRef as React.RefObject<HTMLInputElement>).current) {
           if (e.key === 'ArrowUp') {
             handleIncrement();
           } else if (e.key === 'ArrowDown') {
@@ -83,10 +80,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       };
     }, [handleIncrement, handleDecrement, combinedRef]);
 
-    const handleChange = (values: {
-      value: string;
-      floatValue: number | undefined;
-    }) => {
+    const handleChange = (values: { value: string; floatValue: number | undefined }) => {
       let newValue = values.floatValue;
       let clamped = false;
 
@@ -168,5 +162,5 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         </div>
       </div>
     );
-  }
+  },
 );

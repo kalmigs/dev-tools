@@ -1,6 +1,6 @@
-import { Link } from '@tanstack/react-router'
-import { ArrowLeftIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Link } from '@tanstack/react-router';
+import { ArrowLeftIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function NotFound() {
   return (
@@ -19,5 +19,5 @@ export function NotFound() {
         </Link>
       </Button>
     </div>
-  )
+  );
 }

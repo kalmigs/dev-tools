@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
-import { createFileRoute } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import {
   ArrowRight,
   Braces,
@@ -8,11 +8,11 @@ import {
   GitCompare,
   Sparkles,
   ShieldCheck,
-} from 'lucide-react'
+} from 'lucide-react';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
-})
+});
 
 // Tool data
 const generateTools = [
@@ -37,7 +37,7 @@ const generateTools = [
     url: '/generate/json',
     color: 'from-emerald-500 to-teal-600',
   },
-]
+];
 
 const stringTools = [
   {
@@ -54,7 +54,7 @@ const stringTools = [
     url: '/strings/json-format',
     color: 'from-pink-500 to-rose-600',
   },
-]
+];
 
 const validateTools = [
   {
@@ -64,7 +64,7 @@ const validateTools = [
     url: '/validate/ids',
     color: 'from-yellow-400 to-orange-500',
   },
-]
+];
 
 // Components
 function ToolCard({
@@ -74,11 +74,11 @@ function ToolCard({
   url,
   color,
 }: {
-  title: string
-  description: string
-  icon: React.ComponentType<{ className?: string }>
-  url: string
-  color: string
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  url: string;
+  color: string;
 }) {
   return (
     <Link
@@ -95,16 +95,14 @@ function ToolCard({
           <Icon className="h-5 w-5" />
         </div>
         <h3 className="mb-1.5 font-semibold text-foreground">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {description}
-        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
         <div className="mt-4 flex items-center text-sm font-medium text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           Open tool
           <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
         </div>
       </div>
     </Link>
-  )
+  );
 }
 
 function Section({
@@ -112,9 +110,9 @@ function Section({
   icon: Icon,
   children,
 }: {
-  title: string
-  icon: React.ComponentType<{ className?: string }>
-  children: React.ReactNode
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  children: React.ReactNode;
 }) {
   return (
     <section className="mb-10">
@@ -127,7 +125,7 @@ function Section({
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{children}</div>
     </section>
-  )
+  );
 }
 
 function HomePage() {
@@ -145,24 +143,24 @@ function HomePage() {
 
       {/* Generate Section */}
       <Section title="Generate" icon={Sparkles}>
-        {generateTools.map((tool) => (
+        {generateTools.map(tool => (
           <ToolCard key={tool.url} {...tool} />
         ))}
       </Section>
 
       {/* Strings Section */}
       <Section title="Strings" icon={FileJson}>
-        {stringTools.map((tool) => (
+        {stringTools.map(tool => (
           <ToolCard key={tool.url} {...tool} />
         ))}
       </Section>
 
       {/* Validate Section */}
       <Section title="Validate" icon={ShieldCheck}>
-        {validateTools.map((tool) => (
+        {validateTools.map(tool => (
           <ToolCard key={tool.url} {...tool} />
         ))}
       </Section>
     </div>
-  )
+  );
 }

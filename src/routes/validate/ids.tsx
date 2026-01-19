@@ -1,71 +1,71 @@
-import { useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { isCuid as isCuid2 } from '@paralleldrive/cuid2'
-import { validate as uuidValidate, version as uuidVersion } from 'uuid'
-import { CheckIcon, XIcon } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { isCuid as isCuid2 } from '@paralleldrive/cuid2';
+import { validate as uuidValidate, version as uuidVersion } from 'uuid';
+import { CheckIcon, XIcon } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 // Types
 interface ValidationResult {
-  details?: string
-  type: string
-  valid: boolean
+  details?: string;
+  type: string;
+  valid: boolean;
 }
 
 // Helper functions
 function isCuid(id: string): boolean {
-  return /^c[a-z0-9]{24}$/.test(id)
+  return /^c[a-z0-9]{24}$/.test(id);
 }
 
 function validateId(input: string): ValidationResult[] {
-  const trimmed = input.trim()
+  const trimmed = input.trim();
 
   if (!trimmed) {
-    return []
+    return [];
   }
 
-  const results: ValidationResult[] = []
+  const results: ValidationResult[] = [];
 
   // CUID validation
-  const isValidCuid = isCuid(trimmed)
+  const isValidCuid = isCuid(trimmed);
   results.push({
     type: 'CUID',
     valid: isValidCuid,
-  })
+  });
 
   // CUID2 validation
-  const isValidCuid2 = isCuid2(trimmed)
+  const isValidCuid2 = isCuid2(trimmed);
   results.push({
     type: 'CUID2',
     valid: isValidCuid2,
-  })
+  });
 
   // UUID validation
-  const isValidUuid = uuidValidate(trimmed)
+  const isValidUuid = uuidValidate(trimmed);
   if (isValidUuid) {
-    const version = uuidVersion(trimmed)
+    const version = uuidVersion(trimmed);
     results.push({
       details: `Version ${version}`,
       type: 'UUID',
       valid: true,
-    })
+    });
   } else {
     results.push({
       type: 'UUID',
       valid: false,
-    })
+    });
   }
 
-  return results
+  return results;
 }
 
 // Main component
 function ValidateIdsPage() {
-  const [input, setInput] = useState('')
-  const results = validateId(input)
-  const hasAnyValid = results.some((r) => r.valid)
-  const hasInput = input.trim().length > 0
+  const [input, setInput] = useState('');
+  const results = validateId(input);
+  const hasAnyValid = results.some(r => r.valid);
+  const hasInput = input.trim().length > 0;
 
   return (
     <div className="h-full flex flex-col items-center pt-8 md:pt-16">
@@ -77,7 +77,7 @@ function ValidateIdsPage() {
           </label>
           <Input
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={e => setInput(e.target.value)}
             placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
             className="font-mono text-sm"
             autoFocus
@@ -101,12 +101,12 @@ function ValidateIdsPage() {
 
               {/* Results List */}
               <div className="divide-y">
-                {results.map((result) => (
+                {results.map(result => (
                   <div
                     key={result.type}
                     className={cn(
                       'flex items-center gap-3 px-4 py-3 transition-colors',
-                      result.valid && 'bg-green-500/5'
+                      result.valid && 'bg-green-500/5',
                     )}
                   >
                     {result.valid ? (
@@ -118,7 +118,7 @@ function ValidateIdsPage() {
                       <span
                         className={cn(
                           'font-medium',
-                          result.valid ? 'text-foreground' : 'text-muted-foreground/50'
+                          result.valid ? 'text-foreground' : 'text-muted-foreground/50',
                         )}
                       >
                         {result.type}
@@ -141,10 +141,10 @@ function ValidateIdsPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Route export
 export const Route = createFileRoute('/validate/ids')({
   component: ValidateIdsPage,
-})
+});

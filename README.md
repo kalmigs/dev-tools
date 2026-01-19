@@ -5,15 +5,18 @@ A collection of browser-based developer utilities for generating, formatting, an
 ## Features
 
 ### Generate
+
 - **Faker** - Generate fake data (names, emails, addresses, etc.) using Faker.js
 - **IDs** - Generate unique identifiers (UUID, CUID, CUID2, NanoID)
 - **JSON** - Generate random JSON structures
 
 ### Strings
+
 - **Compare** - Diff and compare text side-by-side
 - **JSON Format** - Format and prettify JSON
 
 ### Validate
+
 - **IDs** - Validate UUID, CUID, and other ID formats
 
 ## Tech Stack

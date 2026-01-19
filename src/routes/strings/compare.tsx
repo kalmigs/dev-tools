@@ -1,78 +1,78 @@
-import { useState, useMemo } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { diffWords, diffChars, type Change } from 'diff'
-import { CheckIcon, XIcon, ChevronDownIcon } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { useIsMobile } from '@/hooks/use-mobile'
-import { cn } from '@/lib/utils'
+import { useState, useMemo } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { diffWords, diffChars, type Change } from 'diff';
+import { CheckIcon, XIcon, ChevronDownIcon } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 // Types
-type DiffMode = 'inline' | 'side'
+type DiffMode = 'inline' | 'side';
 
 interface SearchParams {
-  highlight?: boolean
-  diffMode?: DiffMode
-  deepJson?: boolean
-  ignoreCase?: boolean
-  ignoreWs?: boolean
-  ignoreArrayOrder?: boolean
+  highlight?: boolean;
+  diffMode?: DiffMode;
+  deepJson?: boolean;
+  ignoreCase?: boolean;
+  ignoreWs?: boolean;
+  ignoreArrayOrder?: boolean;
 }
 
 interface CompareResult {
-  isEqual: boolean
-  normalizedA: string
-  normalizedB: string
+  isEqual: boolean;
+  normalizedA: string;
+  normalizedB: string;
 }
 
 // Utility functions
 function countWords(text: string): number {
-  if (!text.trim()) return 0
-  return text.trim().split(/\s+/).filter(Boolean).length
+  if (!text.trim()) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function normalizeWhitespace(text: string): string {
-  return text.replace(/\s+/g, '')
+  return text.replace(/\s+/g, '');
 }
 
 function sortObjectKeys(obj: unknown): unknown {
   if (Array.isArray(obj)) {
-    return obj.map(sortObjectKeys)
+    return obj.map(sortObjectKeys);
   }
   if (obj !== null && typeof obj === 'object') {
-    const sorted: Record<string, unknown> = {}
+    const sorted: Record<string, unknown> = {};
     for (const key of Object.keys(obj).sort()) {
-      sorted[key] = sortObjectKeys((obj as Record<string, unknown>)[key])
+      sorted[key] = sortObjectKeys((obj as Record<string, unknown>)[key]);
     }
-    return sorted
+    return sorted;
   }
-  return obj
+  return obj;
 }
 
 function sortArraysInObject(obj: unknown): unknown {
   if (Array.isArray(obj)) {
     // Sort array elements by their JSON representation for consistent comparison
-    const sorted = obj.map(sortArraysInObject)
-    return sorted.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))
+    const sorted = obj.map(sortArraysInObject);
+    return sorted.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
   }
   if (obj !== null && typeof obj === 'object') {
-    const result: Record<string, unknown> = {}
+    const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      result[key] = sortArraysInObject(value)
+      result[key] = sortArraysInObject(value);
     }
-    return result
+    return result;
   }
-  return obj
+  return obj;
 }
 
 function tryParseJson(text: string): { valid: boolean; parsed: unknown } {
   try {
-    return { valid: true, parsed: JSON.parse(text) }
+    return { valid: true, parsed: JSON.parse(text) };
   } catch {
-    return { valid: false, parsed: null }
+    return { valid: false, parsed: null };
   }
 }
 
@@ -80,61 +80,61 @@ function compareStrings(
   a: string,
   b: string,
   options: {
-    deepJson: boolean
-    ignoreCase: boolean
-    ignoreWhitespace: boolean
-    ignoreArrayOrder: boolean
-  }
+    deepJson: boolean;
+    ignoreCase: boolean;
+    ignoreWhitespace: boolean;
+    ignoreArrayOrder: boolean;
+  },
 ): CompareResult {
-  let normalizedA = a
-  let normalizedB = b
+  let normalizedA = a;
+  let normalizedB = b;
 
   // Handle JSON comparison (enabled by deepJson OR ignoreArrayOrder)
-  const shouldParseJson = options.deepJson || options.ignoreArrayOrder
+  const shouldParseJson = options.deepJson || options.ignoreArrayOrder;
   if (shouldParseJson) {
     // If ignoring whitespace, clean up JSON strings before parsing
     // This handles cases like "[1,2 ]" which is invalid JSON due to extra space
-    const jsonStringA = options.ignoreWhitespace ? a.replace(/\s+/g, '') : a
-    const jsonStringB = options.ignoreWhitespace ? b.replace(/\s+/g, '') : b
+    const jsonStringA = options.ignoreWhitespace ? a.replace(/\s+/g, '') : a;
+    const jsonStringB = options.ignoreWhitespace ? b.replace(/\s+/g, '') : b;
 
-    const jsonA = tryParseJson(jsonStringA)
-    const jsonB = tryParseJson(jsonStringB)
+    const jsonA = tryParseJson(jsonStringA);
+    const jsonB = tryParseJson(jsonStringB);
 
     if (jsonA.valid && jsonB.valid) {
       // Sort object keys if deepJson is enabled
-      let parsedA = options.deepJson ? sortObjectKeys(jsonA.parsed) : jsonA.parsed
-      let parsedB = options.deepJson ? sortObjectKeys(jsonB.parsed) : jsonB.parsed
+      let parsedA = options.deepJson ? sortObjectKeys(jsonA.parsed) : jsonA.parsed;
+      let parsedB = options.deepJson ? sortObjectKeys(jsonB.parsed) : jsonB.parsed;
 
       // Sort arrays if ignoreArrayOrder is enabled
       if (options.ignoreArrayOrder) {
-        parsedA = sortArraysInObject(parsedA)
-        parsedB = sortArraysInObject(parsedB)
+        parsedA = sortArraysInObject(parsedA);
+        parsedB = sortArraysInObject(parsedB);
       }
 
-      normalizedA = JSON.stringify(parsedA, null, 2)
-      normalizedB = JSON.stringify(parsedB, null, 2)
+      normalizedA = JSON.stringify(parsedA, null, 2);
+      normalizedB = JSON.stringify(parsedB, null, 2);
     }
   }
 
   // Apply case normalization for comparison
-  let compareA = normalizedA
-  let compareB = normalizedB
+  let compareA = normalizedA;
+  let compareB = normalizedB;
 
   if (options.ignoreCase) {
-    compareA = compareA.toLowerCase()
-    compareB = compareB.toLowerCase()
+    compareA = compareA.toLowerCase();
+    compareB = compareB.toLowerCase();
   }
 
   if (options.ignoreWhitespace) {
-    compareA = normalizeWhitespace(compareA)
-    compareB = normalizeWhitespace(compareB)
+    compareA = normalizeWhitespace(compareA);
+    compareB = normalizeWhitespace(compareB);
   }
 
   return {
     isEqual: compareA === compareB,
     normalizedA,
     normalizedB,
-  }
+  };
 }
 
 // Diff rendering components
@@ -144,43 +144,37 @@ function InlineDiff({ changes }: { changes: Change[] }) {
       {changes.map((change, i) => {
         if (change.added) {
           return (
-            <span
-              key={i}
-              className="bg-green-500/20 text-green-700 dark:text-green-400"
-            >
+            <span key={i} className="bg-green-500/20 text-green-700 dark:text-green-400">
               {change.value}
             </span>
-          )
+          );
         }
         if (change.removed) {
           return (
-            <span
-              key={i}
-              className="bg-red-500/20 text-red-700 dark:text-red-400 line-through"
-            >
+            <span key={i} className="bg-red-500/20 text-red-700 dark:text-red-400 line-through">
               {change.value}
             </span>
-          )
+          );
         }
-        return <span key={i}>{change.value}</span>
+        return <span key={i}>{change.value}</span>;
       })}
     </div>
-  )
+  );
 }
 
 function SideBySideDiff({ changes }: { changes: Change[] }) {
   // Split changes into left (removals + unchanged) and right (additions + unchanged)
-  const leftParts: { text: string; type: 'removed' | 'unchanged' }[] = []
-  const rightParts: { text: string; type: 'added' | 'unchanged' }[] = []
+  const leftParts: { text: string; type: 'removed' | 'unchanged' }[] = [];
+  const rightParts: { text: string; type: 'added' | 'unchanged' }[] = [];
 
   for (const change of changes) {
     if (change.removed) {
-      leftParts.push({ text: change.value, type: 'removed' })
+      leftParts.push({ text: change.value, type: 'removed' });
     } else if (change.added) {
-      rightParts.push({ text: change.value, type: 'added' })
+      rightParts.push({ text: change.value, type: 'added' });
     } else {
-      leftParts.push({ text: change.value, type: 'unchanged' })
-      rightParts.push({ text: change.value, type: 'unchanged' })
+      leftParts.push({ text: change.value, type: 'unchanged' });
+      rightParts.push({ text: change.value, type: 'unchanged' });
     }
   }
 
@@ -195,8 +189,7 @@ function SideBySideDiff({ changes }: { changes: Change[] }) {
             <span
               key={i}
               className={cn(
-                part.type === 'removed' &&
-                  'bg-red-500/20 text-red-700 dark:text-red-400'
+                part.type === 'removed' && 'bg-red-500/20 text-red-700 dark:text-red-400',
               )}
             >
               {part.text}
@@ -213,8 +206,7 @@ function SideBySideDiff({ changes }: { changes: Change[] }) {
             <span
               key={i}
               className={cn(
-                part.type === 'added' &&
-                  'bg-green-500/20 text-green-700 dark:text-green-400'
+                part.type === 'added' && 'bg-green-500/20 text-green-700 dark:text-green-400',
               )}
             >
               {part.text}
@@ -223,31 +215,35 @@ function SideBySideDiff({ changes }: { changes: Change[] }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function MobileSideBySideDiff({ changes }: { changes: Change[] }) {
-  const [activeTab, setActiveTab] = useState<'original' | 'modified'>('original')
+  const [activeTab, setActiveTab] = useState<'original' | 'modified'>('original');
 
-  const leftParts: { text: string; type: 'removed' | 'unchanged' }[] = []
-  const rightParts: { text: string; type: 'added' | 'unchanged' }[] = []
+  const leftParts: { text: string; type: 'removed' | 'unchanged' }[] = [];
+  const rightParts: { text: string; type: 'added' | 'unchanged' }[] = [];
 
   for (const change of changes) {
     if (change.removed) {
-      leftParts.push({ text: change.value, type: 'removed' })
+      leftParts.push({ text: change.value, type: 'removed' });
     } else if (change.added) {
-      rightParts.push({ text: change.value, type: 'added' })
+      rightParts.push({ text: change.value, type: 'added' });
     } else {
-      leftParts.push({ text: change.value, type: 'unchanged' })
-      rightParts.push({ text: change.value, type: 'unchanged' })
+      leftParts.push({ text: change.value, type: 'unchanged' });
+      rightParts.push({ text: change.value, type: 'unchanged' });
     }
   }
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'original' | 'modified')}>
+    <Tabs value={activeTab} onValueChange={v => setActiveTab(v as 'original' | 'modified')}>
       <TabsList className="w-full">
-        <TabsTrigger value="original" className="flex-1">Original (A)</TabsTrigger>
-        <TabsTrigger value="modified" className="flex-1">Modified (B)</TabsTrigger>
+        <TabsTrigger value="original" className="flex-1">
+          Original (A)
+        </TabsTrigger>
+        <TabsTrigger value="modified" className="flex-1">
+          Modified (B)
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="original" className="mt-3">
         <div className="border rounded-lg p-3 font-mono text-sm whitespace-pre-wrap break-all min-h-[100px]">
@@ -255,8 +251,7 @@ function MobileSideBySideDiff({ changes }: { changes: Change[] }) {
             <span
               key={i}
               className={cn(
-                part.type === 'removed' &&
-                  'bg-red-500/20 text-red-700 dark:text-red-400'
+                part.type === 'removed' && 'bg-red-500/20 text-red-700 dark:text-red-400',
               )}
             >
               {part.text}
@@ -270,8 +265,7 @@ function MobileSideBySideDiff({ changes }: { changes: Change[] }) {
             <span
               key={i}
               className={cn(
-                part.type === 'added' &&
-                  'bg-green-500/20 text-green-700 dark:text-green-400'
+                part.type === 'added' && 'bg-green-500/20 text-green-700 dark:text-green-400',
               )}
             >
               {part.text}
@@ -280,7 +274,7 @@ function MobileSideBySideDiff({ changes }: { changes: Change[] }) {
         </div>
       </TabsContent>
     </Tabs>
-  )
+  );
 }
 
 // Toggle checkbox component
@@ -291,33 +285,23 @@ function ToggleOption({
   onCheckedChange,
   description,
 }: {
-  id: string
-  label: string
-  checked: boolean
-  onCheckedChange: (checked: boolean) => void
-  description?: string
+  id: string;
+  label: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  description?: string;
 }) {
   return (
     <div className="flex items-start gap-2">
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={onCheckedChange}
-        className="mt-0.5"
-      />
+      <Checkbox id={id} checked={checked} onCheckedChange={onCheckedChange} className="mt-0.5" />
       <div className="grid gap-0.5 leading-none">
-        <label
-          htmlFor={id}
-          className="text-sm font-medium cursor-pointer select-none"
-        >
+        <label htmlFor={id} className="text-sm font-medium cursor-pointer select-none">
           {label}
         </label>
-        {description && (
-          <span className="text-xs text-muted-foreground">{description}</span>
-        )}
+        {description && <span className="text-xs text-muted-foreground">{description}</span>}
       </div>
     </div>
-  )
+  );
 }
 
 // Options panel
@@ -336,19 +320,19 @@ function OptionsPanel({
   onIgnoreArrayOrderChange,
   isMobile,
 }: {
-  highlight: boolean
-  diffMode: DiffMode
-  deepJson: boolean
-  ignoreCase: boolean
-  ignoreWhitespace: boolean
-  ignoreArrayOrder: boolean
-  onHighlightChange: (v: boolean) => void
-  onDiffModeChange: (v: DiffMode) => void
-  onDeepJsonChange: (v: boolean) => void
-  onIgnoreCaseChange: (v: boolean) => void
-  onIgnoreWhitespaceChange: (v: boolean) => void
-  onIgnoreArrayOrderChange: (v: boolean) => void
-  isMobile: boolean
+  highlight: boolean;
+  diffMode: DiffMode;
+  deepJson: boolean;
+  ignoreCase: boolean;
+  ignoreWhitespace: boolean;
+  ignoreArrayOrder: boolean;
+  onHighlightChange: (v: boolean) => void;
+  onDiffModeChange: (v: DiffMode) => void;
+  onDeepJsonChange: (v: boolean) => void;
+  onIgnoreCaseChange: (v: boolean) => void;
+  onIgnoreWhitespaceChange: (v: boolean) => void;
+  onIgnoreArrayOrderChange: (v: boolean) => void;
+  isMobile: boolean;
 }) {
   const content = (
     <div className={cn('space-y-4', !isMobile && 'flex gap-8 space-y-0')}>
@@ -409,7 +393,7 @@ function OptionsPanel({
           </h3>
           <RadioGroup
             value={diffMode}
-            onValueChange={(v) => onDiffModeChange(v as DiffMode)}
+            onValueChange={v => onDiffModeChange(v as DiffMode)}
             className="flex gap-4"
           >
             <div className="flex items-center gap-2">
@@ -428,7 +412,7 @@ function OptionsPanel({
         </div>
       )}
     </div>
-  )
+  );
 
   if (isMobile) {
     return (
@@ -437,69 +421,67 @@ function OptionsPanel({
           Options
           <ChevronDownIcon className="size-4 transition-transform [[data-state=open]>&]:rotate-180" />
         </CollapsibleTrigger>
-        <CollapsibleContent className="pt-3 pb-1">
-          {content}
-        </CollapsibleContent>
+        <CollapsibleContent className="pt-3 pb-1">{content}</CollapsibleContent>
       </Collapsible>
-    )
+    );
   }
 
-  return <div className="border rounded-lg p-4">{content}</div>
+  return <div className="border rounded-lg p-4">{content}</div>;
 }
 
 // Main component
 function ComparePage() {
-  const isMobile = useIsMobile()
-  const navigate = useNavigate({ from: '/strings/compare' })
-  const search = Route.useSearch()
+  const isMobile = useIsMobile();
+  const navigate = useNavigate({ from: '/strings/compare' });
+  const search = Route.useSearch();
 
   // Initialize from search params with defaults
-  const highlight = search.highlight ?? true
-  const diffMode = search.diffMode ?? 'inline'
-  const deepJson = search.deepJson ?? false
-  const ignoreCase = search.ignoreCase ?? false
-  const ignoreWhitespace = search.ignoreWs ?? false
-  const ignoreArrayOrder = search.ignoreArrayOrder ?? false
+  const highlight = search.highlight ?? true;
+  const diffMode = search.diffMode ?? 'inline';
+  const deepJson = search.deepJson ?? false;
+  const ignoreCase = search.ignoreCase ?? false;
+  const ignoreWhitespace = search.ignoreWs ?? false;
+  const ignoreArrayOrder = search.ignoreArrayOrder ?? false;
 
-  const [stringA, setStringA] = useState('')
-  const [stringB, setStringB] = useState('')
+  const [stringA, setStringA] = useState('');
+  const [stringB, setStringB] = useState('');
 
   // Update URL helper
   const updateSearchParams = (updates: Partial<SearchParams>) => {
     navigate({
-      search: (prev) => ({ ...prev, ...updates }),
+      search: prev => ({ ...prev, ...updates }),
       replace: true,
-    })
-  }
+    });
+  };
 
   // Compute comparison result
   const result = useMemo(() => {
-    if (!stringA && !stringB) return null
+    if (!stringA && !stringB) return null;
 
     return compareStrings(stringA, stringB, {
       deepJson,
       ignoreCase,
       ignoreWhitespace,
       ignoreArrayOrder,
-    })
-  }, [stringA, stringB, deepJson, ignoreCase, ignoreWhitespace, ignoreArrayOrder])
+    });
+  }, [stringA, stringB, deepJson, ignoreCase, ignoreWhitespace, ignoreArrayOrder]);
 
   // Compute diff changes
   const diffChanges = useMemo(() => {
-    if (!result || !highlight) return null
+    if (!result || !highlight) return null;
 
     // Use word diff for better readability, fall back to char diff for short strings
-    const useCharDiff = result.normalizedA.length < 50 && result.normalizedB.length < 50
-    const diffFn = useCharDiff ? diffChars : diffWords
+    const useCharDiff = result.normalizedA.length < 50 && result.normalizedB.length < 50;
+    const diffFn = useCharDiff ? diffChars : diffWords;
 
     return diffFn(result.normalizedA, result.normalizedB, {
       ignoreCase: ignoreCase,
-    })
-  }, [result, highlight, ignoreCase])
+    });
+  }, [result, highlight, ignoreCase]);
 
   // Word counts
-  const wordCountA = useMemo(() => countWords(stringA), [stringA])
-  const wordCountB = useMemo(() => countWords(stringB), [stringB])
+  const wordCountA = useMemo(() => countWords(stringA), [stringA]);
+  const wordCountB = useMemo(() => countWords(stringB), [stringB]);
 
   return (
     <div className="flex flex-col gap-6 h-full">
@@ -511,12 +493,12 @@ function ComparePage() {
         ignoreCase={ignoreCase}
         ignoreWhitespace={ignoreWhitespace}
         ignoreArrayOrder={ignoreArrayOrder}
-        onHighlightChange={(v) => updateSearchParams({ highlight: v })}
-        onDiffModeChange={(v) => updateSearchParams({ diffMode: v })}
-        onDeepJsonChange={(v) => updateSearchParams({ deepJson: v })}
-        onIgnoreCaseChange={(v) => updateSearchParams({ ignoreCase: v })}
-        onIgnoreWhitespaceChange={(v) => updateSearchParams({ ignoreWs: v })}
-        onIgnoreArrayOrderChange={(v) => updateSearchParams({ ignoreArrayOrder: v })}
+        onHighlightChange={v => updateSearchParams({ highlight: v })}
+        onDiffModeChange={v => updateSearchParams({ diffMode: v })}
+        onDeepJsonChange={v => updateSearchParams({ deepJson: v })}
+        onIgnoreCaseChange={v => updateSearchParams({ ignoreCase: v })}
+        onIgnoreWhitespaceChange={v => updateSearchParams({ ignoreWs: v })}
+        onIgnoreArrayOrderChange={v => updateSearchParams({ ignoreArrayOrder: v })}
         isMobile={isMobile}
       />
 
@@ -526,7 +508,7 @@ function ComparePage() {
           <label className="text-sm font-medium">String A</label>
           <Textarea
             value={stringA}
-            onChange={(e) => setStringA(e.target.value)}
+            onChange={e => setStringA(e.target.value)}
             placeholder="Paste first string here..."
             className="h-40 font-mono resize-y"
           />
@@ -538,7 +520,7 @@ function ComparePage() {
           <label className="text-sm font-medium">String B</label>
           <Textarea
             value={stringB}
-            onChange={(e) => setStringB(e.target.value)}
+            onChange={e => setStringB(e.target.value)}
             placeholder="Paste second string here..."
             className="h-40 font-mono resize-y"
           />
@@ -555,7 +537,7 @@ function ComparePage() {
             'flex items-center gap-2 px-4 py-3 rounded-lg font-medium',
             result.isEqual
               ? 'bg-green-500/10 text-green-700 dark:text-green-400'
-              : 'bg-red-500/10 text-red-700 dark:text-red-400'
+              : 'bg-red-500/10 text-red-700 dark:text-red-400',
           )}
         >
           {result.isEqual ? (
@@ -600,7 +582,7 @@ function ComparePage() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Route export
@@ -608,44 +590,48 @@ export const Route = createFileRoute('/strings/compare')({
   component: ComparePage,
   validateSearch: (search: Record<string, unknown>): SearchParams => {
     return {
-      highlight: typeof search.highlight === 'boolean'
-        ? search.highlight
-        : search.highlight === 'true'
-          ? true
-          : search.highlight === 'false'
-            ? false
-            : undefined,
-      diffMode: search.diffMode === 'inline' || search.diffMode === 'side'
-        ? search.diffMode
-        : undefined,
-      deepJson: typeof search.deepJson === 'boolean'
-        ? search.deepJson
-        : search.deepJson === 'true'
-          ? true
-          : search.deepJson === 'false'
-            ? false
-            : undefined,
-      ignoreCase: typeof search.ignoreCase === 'boolean'
-        ? search.ignoreCase
-        : search.ignoreCase === 'true'
-          ? true
-          : search.ignoreCase === 'false'
-            ? false
-            : undefined,
-      ignoreWs: typeof search.ignoreWs === 'boolean'
-        ? search.ignoreWs
-        : search.ignoreWs === 'true'
-          ? true
-          : search.ignoreWs === 'false'
-            ? false
-            : undefined,
-      ignoreArrayOrder: typeof search.ignoreArrayOrder === 'boolean'
-        ? search.ignoreArrayOrder
-        : search.ignoreArrayOrder === 'true'
-          ? true
-          : search.ignoreArrayOrder === 'false'
-            ? false
-            : undefined,
-    }
+      highlight:
+        typeof search.highlight === 'boolean'
+          ? search.highlight
+          : search.highlight === 'true'
+            ? true
+            : search.highlight === 'false'
+              ? false
+              : undefined,
+      diffMode:
+        search.diffMode === 'inline' || search.diffMode === 'side' ? search.diffMode : undefined,
+      deepJson:
+        typeof search.deepJson === 'boolean'
+          ? search.deepJson
+          : search.deepJson === 'true'
+            ? true
+            : search.deepJson === 'false'
+              ? false
+              : undefined,
+      ignoreCase:
+        typeof search.ignoreCase === 'boolean'
+          ? search.ignoreCase
+          : search.ignoreCase === 'true'
+            ? true
+            : search.ignoreCase === 'false'
+              ? false
+              : undefined,
+      ignoreWs:
+        typeof search.ignoreWs === 'boolean'
+          ? search.ignoreWs
+          : search.ignoreWs === 'true'
+            ? true
+            : search.ignoreWs === 'false'
+              ? false
+              : undefined,
+      ignoreArrayOrder:
+        typeof search.ignoreArrayOrder === 'boolean'
+          ? search.ignoreArrayOrder
+          : search.ignoreArrayOrder === 'true'
+            ? true
+            : search.ignoreArrayOrder === 'false'
+              ? false
+              : undefined,
+    };
   },
-})
+});

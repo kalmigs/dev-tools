@@ -1,11 +1,16 @@
-import { useState } from 'react'
-import { Link, useRouterState } from '@tanstack/react-router'
-import { Braces, ChevronDown, FileJson, Fingerprint, GitCompare, Home, ShieldCheck, Sparkles } from 'lucide-react'
+import { useState } from 'react';
+import { Link, useRouterState } from '@tanstack/react-router';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+  Braces,
+  ChevronDown,
+  FileJson,
+  Fingerprint,
+  GitCompare,
+  Home,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +25,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from '@/components/ui/sidebar'
+} from '@/components/ui/sidebar';
 
 // Constants
 const generateItems = [
@@ -42,7 +47,7 @@ const generateItems = [
     title: 'JSON',
     url: '/generate/json',
   },
-]
+];
 
 const stringItems = [
   {
@@ -57,7 +62,7 @@ const stringItems = [
     title: 'JSON Format',
     url: '/strings/json-format',
   },
-]
+];
 
 const validateItems = [
   {
@@ -66,27 +71,21 @@ const validateItems = [
     title: 'IDs',
     url: '/validate/ids',
   },
-]
+];
 
 // Main component
 export function AppSidebar() {
-  const routerState = useRouterState()
-  const currentPath = routerState.location.pathname
-  const { setOpenMobile } = useSidebar()
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+  const { setOpenMobile } = useSidebar();
 
-  const [generateOpen, setGenerateOpen] = useState(
-    currentPath.startsWith('/generate')
-  )
-  const [stringsOpen, setStringsOpen] = useState(
-    currentPath.startsWith('/strings')
-  )
-  const [validateOpen, setValidateOpen] = useState(
-    currentPath.startsWith('/validate')
-  )
+  const [generateOpen, setGenerateOpen] = useState(currentPath.startsWith('/generate'));
+  const [stringsOpen, setStringsOpen] = useState(currentPath.startsWith('/strings'));
+  const [validateOpen, setValidateOpen] = useState(currentPath.startsWith('/validate'));
 
   const handleLinkClick = () => {
-    setOpenMobile(false)
-  }
+    setOpenMobile(false);
+  };
 
   return (
     <Sidebar>
@@ -130,12 +129,9 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {generateItems.map((item) => (
+                      {generateItems.map(item => (
                         <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={currentPath === item.url}
-                          >
+                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
                             <Link to={item.url} onClick={handleLinkClick}>
                               <item.icon />
                               <span>{item.title}</span>
@@ -159,12 +155,9 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {stringItems.map((item) => (
+                      {stringItems.map(item => (
                         <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={currentPath === item.url}
-                          >
+                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
                             <Link to={item.url} onClick={handleLinkClick}>
                               <item.icon />
                               <span>{item.title}</span>
@@ -188,12 +181,9 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {validateItems.map((item) => (
+                      {validateItems.map(item => (
                         <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={currentPath === item.url}
-                          >
+                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
                             <Link to={item.url} onClick={handleLinkClick}>
                               <item.icon />
                               <span>{item.title}</span>
@@ -210,5 +200,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

@@ -1,55 +1,62 @@
-import { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 // @ts-expect-error - @bugsnag/cuid has type export issues
-import cuid from '@bugsnag/cuid'
-import { nanoid } from 'nanoid'
-import { createId as cuid2 } from '@paralleldrive/cuid2'
-import { v1 as uuidv1, v3 as uuidv3, v4 as uuidv4, v5 as uuidv5, v6 as uuidv6, v7 as uuidv7 } from 'uuid'
-import { CheckIcon, CopyIcon, ShuffleIcon } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { NumberInput } from '@/components/ui/number-input'
+import cuid from '@bugsnag/cuid';
+import { nanoid } from 'nanoid';
+import { createId as cuid2 } from '@paralleldrive/cuid2';
+import {
+  v1 as uuidv1,
+  v3 as uuidv3,
+  v4 as uuidv4,
+  v5 as uuidv5,
+  v6 as uuidv6,
+  v7 as uuidv7,
+} from 'uuid';
+import { CheckIcon, CopyIcon, ShuffleIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useIsMobile } from '@/hooks/use-mobile'
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Types
-type IdType = 'cuid' | 'cuid2' | 'nanoid' | 'uuid'
-type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7'
+type IdType = 'cuid' | 'cuid2' | 'nanoid' | 'uuid';
+type UuidVersion = 'v1' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7';
 
 interface IdTypeOptions {
-  nanoid: { length?: number }
-  uuid: { version: UuidVersion }
+  nanoid: { length?: number };
+  uuid: { version: UuidVersion };
 }
 
 interface InputControlsProps {
-  count: number
-  idType: IdType
-  onCountChange: (count: number) => void
-  onGenerate: () => void
-  onIdTypeChange: (type: IdType) => void
-  onOptionsChange: (options: IdTypeOptions) => void
-  options: IdTypeOptions
+  count: number;
+  idType: IdType;
+  onCountChange: (count: number) => void;
+  onGenerate: () => void;
+  onIdTypeChange: (type: IdType) => void;
+  onOptionsChange: (options: IdTypeOptions) => void;
+  options: IdTypeOptions;
 }
 
 interface OutputSectionProps {
-  copiedAll: boolean
-  copiedIndex: number | null
-  generatedIds: string[]
-  onCopyAll: () => void
-  onCopySingle: (id: string, index: number) => void
+  copiedAll: boolean;
+  copiedIndex: number | null;
+  generatedIds: string[];
+  onCopyAll: () => void;
+  onCopySingle: (id: string, index: number) => void;
 }
 
 interface SearchParams {
-  count?: number
-  nanoidLength?: number
-  type?: IdType
-  uuidVersion?: UuidVersion
+  count?: number;
+  nanoidLength?: number;
+  type?: IdType;
+  uuidVersion?: UuidVersion;
 }
 
 // Constants
@@ -58,9 +65,9 @@ const ID_TYPE_OPTIONS: { description: string; label: string; value: IdType }[] =
   { description: 'Next generation CUID', label: 'CUID2', value: 'cuid2' },
   { description: 'Tiny, secure, URL-friendly', label: 'Nanoid', value: 'nanoid' },
   { description: 'Universally Unique Identifier', label: 'UUID', value: 'uuid' },
-]
+];
 
-const UUID_NAMESPACE = '6ba7b811-9dad-11d1-80b4-00c04fd430c8'
+const UUID_NAMESPACE = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
 
 const UUID_VERSION_OPTIONS: { label: string; value: UuidVersion }[] = [
   { label: 'v1 (Timestamp)', value: 'v1' },
@@ -69,44 +76,44 @@ const UUID_VERSION_OPTIONS: { label: string; value: UuidVersion }[] = [
   { label: 'v5 (SHA-1 Namespace)', value: 'v5' },
   { label: 'v6 (Reordered Time)', value: 'v6' },
   { label: 'v7 (Unix Epoch)', value: 'v7' },
-]
+];
 
 // Helper functions
 function generateId(type: IdType, options: IdTypeOptions): string {
   switch (type) {
     case 'cuid':
-      return cuid()
+      return cuid();
     case 'cuid2':
-      return cuid2()
+      return cuid2();
     case 'nanoid':
-      return nanoid(options.nanoid.length)
+      return nanoid(options.nanoid.length);
     case 'uuid':
-      return generateUuid(options.uuid.version)
+      return generateUuid(options.uuid.version);
   }
 }
 
 function generateInitialIds(type: IdType, options: IdTypeOptions, count: number): string[] {
-  const ids: string[] = []
+  const ids: string[] = [];
   for (let i = 0; i < count; i++) {
-    ids.push(generateId(type, options))
+    ids.push(generateId(type, options));
   }
-  return ids
+  return ids;
 }
 
 function generateUuid(version: UuidVersion): string {
   switch (version) {
     case 'v1':
-      return uuidv1()
+      return uuidv1();
     case 'v3':
-      return uuidv3(crypto.randomUUID(), UUID_NAMESPACE)
+      return uuidv3(crypto.randomUUID(), UUID_NAMESPACE);
     case 'v4':
-      return uuidv4()
+      return uuidv4();
     case 'v5':
-      return uuidv5(crypto.randomUUID(), UUID_NAMESPACE)
+      return uuidv5(crypto.randomUUID(), UUID_NAMESPACE);
     case 'v6':
-      return uuidv6()
+      return uuidv6();
     case 'v7':
-      return uuidv7()
+      return uuidv7();
   }
 }
 
@@ -124,15 +131,13 @@ function InputControls({
     <div className="flex flex-col gap-6">
       {/* ID Type Selector */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-muted-foreground">
-          ID Type
-        </label>
-        <Select value={idType} onValueChange={(v) => onIdTypeChange(v as IdType)}>
+        <label className="text-sm font-medium text-muted-foreground">ID Type</label>
+        <Select value={idType} onValueChange={v => onIdTypeChange(v as IdType)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select ID type" />
           </SelectTrigger>
           <SelectContent>
-            {ID_TYPE_OPTIONS.map((option) => (
+            {ID_TYPE_OPTIONS.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -143,17 +148,15 @@ function InputControls({
 
       {/* Count Input */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-muted-foreground">
-          Count
-        </label>
+        <label className="text-sm font-medium text-muted-foreground">Count</label>
         <div className="w-[100px]">
           <NumberInput
             value={count}
-            onValueChange={(v) => onCountChange(v ?? 10)}
+            onValueChange={v => onCountChange(v ?? 10)}
             min={1}
             max={100}
             stepper={1}
-            onKeyDown={(e) => e.key === 'Enter' && onGenerate()}
+            onKeyDown={e => e.key === 'Enter' && onGenerate()}
           />
         </div>
       </div>
@@ -161,18 +164,18 @@ function InputControls({
       {/* Type-specific Options */}
       {idType === 'uuid' && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Version
-          </label>
+          <label className="text-sm font-medium text-muted-foreground">Version</label>
           <Select
             value={options.uuid.version}
-            onValueChange={(v) => onOptionsChange({ ...options, uuid: { ...options.uuid, version: v as UuidVersion } })}
+            onValueChange={v =>
+              onOptionsChange({ ...options, uuid: { ...options.uuid, version: v as UuidVersion } })
+            }
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select version" />
             </SelectTrigger>
             <SelectContent>
-              {UUID_VERSION_OPTIONS.map((option) => (
+              {UUID_VERSION_OPTIONS.map(option => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>
@@ -184,18 +187,18 @@ function InputControls({
 
       {idType === 'nanoid' && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Length
-          </label>
+          <label className="text-sm font-medium text-muted-foreground">Length</label>
           <div className="w-[100px]">
             <NumberInput
               value={options.nanoid.length}
-              onValueChange={(v) => onOptionsChange({ ...options, nanoid: { ...options.nanoid, length: v } })}
+              onValueChange={v =>
+                onOptionsChange({ ...options, nanoid: { ...options.nanoid, length: v } })
+              }
               min={1}
               max={256}
               stepper={1}
               placeholder="21"
-              onKeyDown={(e) => e.key === 'Enter' && onGenerate()}
+              onKeyDown={e => e.key === 'Enter' && onGenerate()}
             />
           </div>
         </div>
@@ -207,7 +210,7 @@ function InputControls({
         Generate
       </Button>
     </div>
-  )
+  );
 }
 
 function OutputSection({
@@ -223,15 +226,8 @@ function OutputSection({
         <div className="border rounded-lg overflow-hidden flex-1 flex flex-col min-h-0">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-muted/50 border-b shrink-0">
-            <span className="text-sm font-medium">
-              Generated IDs ({generatedIds.length})
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onCopyAll}
-              className="gap-2"
-            >
+            <span className="text-sm font-medium">Generated IDs ({generatedIds.length})</span>
+            <Button variant="outline" size="sm" onClick={onCopyAll} className="gap-2">
               {copiedAll ? (
                 <>
                   <CheckIcon className="size-4 text-green-500" />
@@ -278,95 +274,99 @@ function OutputSection({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Main component
 function IdsPage() {
-  const isMobile = useIsMobile()
-  const navigate = useNavigate({ from: '/generate/ids' })
-  const search = Route.useSearch()
+  const isMobile = useIsMobile();
+  const navigate = useNavigate({ from: '/generate/ids' });
+  const search = Route.useSearch();
 
   // Initialize state from search params or defaults
-  const initialType = search.type ?? 'uuid'
+  const initialType = search.type ?? 'uuid';
   const initialOptions: IdTypeOptions = {
     nanoid: { length: search.nanoidLength },
     uuid: { version: search.uuidVersion ?? 'v4' },
-  }
-  const initialCount = search.count ?? 10
+  };
+  const initialCount = search.count ?? 10;
 
-  const [activeTab, setActiveTab] = useState('input')
-  const [copiedAll, setCopiedAll] = useState(false)
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-  const [count, setCount] = useState<number>(initialCount)
+  const [activeTab, setActiveTab] = useState('input');
+  const [copiedAll, setCopiedAll] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [count, setCount] = useState<number>(initialCount);
   const [generatedIds, setGeneratedIds] = useState<string[]>(() =>
-    generateInitialIds(initialType, initialOptions, initialCount)
-  )
-  const [idType, setIdType] = useState<IdType>(initialType)
-  const [options, setOptions] = useState<IdTypeOptions>(initialOptions)
+    generateInitialIds(initialType, initialOptions, initialCount),
+  );
+  const [idType, setIdType] = useState<IdType>(initialType);
+  const [options, setOptions] = useState<IdTypeOptions>(initialOptions);
 
   // Update URL when settings change
   const updateSearchParams = (updates: Partial<SearchParams>) => {
     navigate({
-      search: (prev) => ({
+      search: prev => ({
         ...prev,
         ...updates,
       }),
       replace: true,
-    })
-  }
+    });
+  };
 
   const handleCopyAll = async () => {
-    await navigator.clipboard.writeText(generatedIds.join('\n'))
-    setCopiedAll(true)
-    setTimeout(() => setCopiedAll(false), 2000)
-  }
+    await navigator.clipboard.writeText(generatedIds.join('\n'));
+    setCopiedAll(true);
+    setTimeout(() => setCopiedAll(false), 2000);
+  };
 
   const handleCopySingle = async (id: string, index: number) => {
-    await navigator.clipboard.writeText(id)
-    setCopiedIndex(index)
-    setTimeout(() => setCopiedIndex(null), 2000)
-  }
+    await navigator.clipboard.writeText(id);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
 
   const handleCountChange = (newCount: number) => {
-    setCount(newCount)
-    updateSearchParams({ count: newCount })
-  }
+    setCount(newCount);
+    updateSearchParams({ count: newCount });
+  };
 
   const handleGenerate = () => {
-    const ids: string[] = []
+    const ids: string[] = [];
     for (let i = 0; i < count; i++) {
-      ids.push(generateId(idType, options))
+      ids.push(generateId(idType, options));
     }
-    setGeneratedIds(ids)
-    setCopiedAll(false)
-    setCopiedIndex(null)
+    setGeneratedIds(ids);
+    setCopiedAll(false);
+    setCopiedIndex(null);
     // Switch to output tab on mobile
     if (isMobile) {
-      setActiveTab('output')
+      setActiveTab('output');
     }
-  }
+  };
 
   const handleIdTypeChange = (type: IdType) => {
-    setIdType(type)
-    updateSearchParams({ type })
-  }
+    setIdType(type);
+    updateSearchParams({ type });
+  };
 
   const handleOptionsChange = (newOptions: IdTypeOptions) => {
-    setOptions(newOptions)
+    setOptions(newOptions);
     updateSearchParams({
       nanoidLength: newOptions.nanoid.length,
       uuidVersion: newOptions.uuid.version,
-    })
-  }
+    });
+  };
 
   // Mobile Layout with Tabs
   if (isMobile) {
     return (
       <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
         <TabsList className="w-full">
-          <TabsTrigger value="input" className="flex-1">Input</TabsTrigger>
-          <TabsTrigger value="output" className="flex-1">Output</TabsTrigger>
+          <TabsTrigger value="input" className="flex-1">
+            Input
+          </TabsTrigger>
+          <TabsTrigger value="output" className="flex-1">
+            Output
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="input" className="flex-1 pt-4">
           <InputControls
@@ -379,7 +379,10 @@ function IdsPage() {
             options={options}
           />
         </TabsContent>
-        <TabsContent value="output" className="flex-1 pt-4 min-h-0 overflow-auto max-h-[calc(100vh-8.5rem)] max-w-[calc(100vw-2rem)]">
+        <TabsContent
+          value="output"
+          className="flex-1 pt-4 min-h-0 overflow-auto max-h-[calc(100vh-8.5rem)] max-w-[calc(100vw-2rem)]"
+        >
           <OutputSection
             copiedAll={copiedAll}
             copiedIndex={copiedIndex}
@@ -389,7 +392,7 @@ function IdsPage() {
           />
         </TabsContent>
       </Tabs>
-    )
+    );
   }
 
   // Desktop Layout - Side by Side
@@ -419,31 +422,35 @@ function IdsPage() {
         />
       </div>
     </div>
-  )
+  );
 }
 
 // Route export
 export const Route = createFileRoute('/generate/ids')({
   component: IdsPage,
   validateSearch: (search: Record<string, unknown>): SearchParams => {
-    const validTypes: IdType[] = ['cuid', 'cuid2', 'nanoid', 'uuid']
-    const validUuidVersions: UuidVersion[] = ['v1', 'v3', 'v4', 'v5', 'v6', 'v7']
+    const validTypes: IdType[] = ['cuid', 'cuid2', 'nanoid', 'uuid'];
+    const validUuidVersions: UuidVersion[] = ['v1', 'v3', 'v4', 'v5', 'v6', 'v7'];
 
     return {
-      count: typeof search.count === 'number' && search.count >= 1 && search.count <= 100
-        ? search.count
-        : typeof search.count === 'string' && !isNaN(Number(search.count))
-          ? Math.min(100, Math.max(1, Number(search.count)))
-          : undefined,
-      nanoidLength: typeof search.nanoidLength === 'number' && search.nanoidLength >= 1 && search.nanoidLength <= 256
-        ? search.nanoidLength
-        : typeof search.nanoidLength === 'string' && !isNaN(Number(search.nanoidLength))
-          ? Math.min(256, Math.max(1, Number(search.nanoidLength)))
-          : undefined,
+      count:
+        typeof search.count === 'number' && search.count >= 1 && search.count <= 100
+          ? search.count
+          : typeof search.count === 'string' && !isNaN(Number(search.count))
+            ? Math.min(100, Math.max(1, Number(search.count)))
+            : undefined,
+      nanoidLength:
+        typeof search.nanoidLength === 'number' &&
+        search.nanoidLength >= 1 &&
+        search.nanoidLength <= 256
+          ? search.nanoidLength
+          : typeof search.nanoidLength === 'string' && !isNaN(Number(search.nanoidLength))
+            ? Math.min(256, Math.max(1, Number(search.nanoidLength)))
+            : undefined,
       type: validTypes.includes(search.type as IdType) ? (search.type as IdType) : undefined,
       uuidVersion: validUuidVersions.includes(search.uuidVersion as UuidVersion)
         ? (search.uuidVersion as UuidVersion)
         : undefined,
-    }
+    };
   },
-})
+});
