@@ -392,7 +392,7 @@ function OutputSection({
             {generatedData.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 px-2 py-2 hover:bg-muted/30 transition-colors group"
+                className="flex items-center gap-2 px-2 py-0.5 hover:bg-muted/30 transition-colors group"
               >
                 <div className="flex-1 min-w-0 overflow-x-auto">
                   <code className="text-sm font-mono whitespace-nowrap select-all">{item}</code>
