@@ -503,14 +503,6 @@ function ComparePage() {
 
   return (
     <div className="flex flex-col gap-6 h-full">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">String Compare</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Compare two strings and visualize differences
-        </p>
-      </div>
-
       {/* Options */}
       <OptionsPanel
         highlight={highlight}
