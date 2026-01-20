@@ -8,6 +8,8 @@ import {
   GitCompare,
   Home,
   ImageIcon,
+  Keyboard,
+  Search,
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
@@ -43,7 +45,7 @@ const generateItems = [
     url: '/generate/ids',
   },
   {
-    description: 'Colors, gradients, patterns',
+    description: 'Placeholders, colors, gradients, and patterns',
     icon: ImageIcon,
     title: 'Image',
     url: '/generate/image',
@@ -80,6 +82,15 @@ const validateItems = [
   },
 ];
 
+const inspectItems = [
+  {
+    description: 'Inspect keyboard events',
+    icon: Keyboard,
+    title: 'Keyboard',
+    url: '/inspect/keyboard',
+  },
+];
+
 // Main component
 export function AppSidebar() {
   const routerState = useRouterState();
@@ -89,6 +100,7 @@ export function AppSidebar() {
   const [generateOpen, setGenerateOpen] = useState(currentPath.startsWith('/generate'));
   const [stringsOpen, setStringsOpen] = useState(currentPath.startsWith('/strings'));
   const [validateOpen, setValidateOpen] = useState(currentPath.startsWith('/validate'));
+  const [inspectOpen, setInspectOpen] = useState(currentPath.startsWith('/inspect'));
 
   const handleLinkClick = () => {
     setOpenMobile(false);
@@ -189,6 +201,32 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {validateItems.map(item => (
+                        <SidebarMenuSubItem key={item.url}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
+                            <Link to={item.url} onClick={handleLinkClick}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              <Collapsible open={inspectOpen} onOpenChange={setInspectOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      <Search />
+                      <span>Inspect</span>
+                      <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {inspectItems.map(item => (
                         <SidebarMenuSubItem key={item.url}>
                           <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
                             <Link to={item.url} onClick={handleLinkClick}>

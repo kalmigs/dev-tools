@@ -7,6 +7,8 @@ import {
   Fingerprint,
   GitCompare,
   ImageIcon,
+  Keyboard,
+  Search,
   Sparkles,
   ShieldCheck,
 } from 'lucide-react';
@@ -33,7 +35,7 @@ const generateTools = [
   },
   {
     title: 'Image',
-    description: 'Colors, gradients, and patterns',
+    description: 'Placeholders, colors, gradients, and patterns',
     icon: ImageIcon,
     url: '/generate/image',
     color: 'from-violet-500 to-purple-600',
@@ -71,6 +73,16 @@ const validateTools = [
     icon: ShieldCheck,
     url: '/validate/ids',
     color: 'from-yellow-400 to-orange-500',
+  },
+];
+
+const inspectTools = [
+  {
+    title: 'Keyboard',
+    description: 'View key codes, events, and modifiers in real-time',
+    icon: Keyboard,
+    url: '/inspect/keyboard',
+    color: 'from-cyan-500 to-teal-600',
   },
 ];
 
@@ -166,6 +178,13 @@ function HomePage() {
       {/* Validate Section */}
       <Section title="Validate" icon={ShieldCheck}>
         {validateTools.map(tool => (
+          <ToolCard key={tool.url} {...tool} />
+        ))}
+      </Section>
+
+      {/* Inspect Section */}
+      <Section title="Inspect" icon={Search}>
+        {inspectTools.map(tool => (
           <ToolCard key={tool.url} {...tool} />
         ))}
       </Section>

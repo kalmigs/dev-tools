@@ -20,7 +20,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 // Subcomponents
 function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
   return (
-    <nav className="px-2 py-2 border-b border-border bg-card flex items-center justify-between">
+    <nav className="sticky top-0 z-50 px-2 py-2 border-b border-border bg-card flex items-center justify-between">
       <div className="flex items-center gap-4">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
@@ -54,7 +54,7 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                     <NavigationMenuLink asChild>
                       <Link to="/generate/image">
                         <div className="font-medium">Image</div>
-                        <p className="text-muted-foreground text-xs">Colors, gradients, patterns</p>
+                        <p className="text-muted-foreground text-xs">Placeholders, colors, gradients, patterns</p>
                       </Link>
                     </NavigationMenuLink>
                   </li>
@@ -107,6 +107,21 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Inspect</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-48 gap-1 p-2">
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link to="/inspect/keyboard">
+                        <div className="font-medium">Keyboard</div>
+                        <p className="text-muted-foreground text-xs">Key codes, events & modifiers</p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
@@ -117,7 +132,7 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
 
 function MobileNav({ onToggleTheme }: { onToggleTheme: () => void }) {
   return (
-    <nav className="px-2 py-2 border-b border-border bg-card flex items-center justify-between">
+    <nav className="sticky top-0 z-50 px-2 py-2 border-b border-border bg-card flex items-center justify-between">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Link to="/" className="flex items-center gap-2">

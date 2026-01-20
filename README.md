@@ -8,6 +8,7 @@ A collection of browser-based developer utilities for generating, formatting, an
 
 - **Faker** - Generate fake data (names, emails, addresses, etc.) using Faker.js
 - **IDs** - Generate unique identifiers (UUID, CUID, CUID2, NanoID)
+- **Image** - Generate placeholder images, colors, gradients, and patterns
 - **JSON** - Generate random JSON structures
 
 ### Strings
@@ -18,6 +19,10 @@ A collection of browser-based developer utilities for generating, formatting, an
 ### Validate
 
 - **IDs** - Validate UUID, CUID, and other ID formats
+
+### Inspect
+
+- **Keyboard** - View key codes, events, and modifiers in real-time with visual keyboard
 
 ## Tech Stack
 

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
 import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
 import { Route as StringsCompareRouteImport } from './routes/strings/compare'
+import { Route as InspectKeyboardRouteImport } from './routes/inspect/keyboard'
 import { Route as GenerateJsonRouteImport } from './routes/generate/json'
 import { Route as GenerateImageRouteImport } from './routes/generate/image'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
@@ -36,6 +37,11 @@ const StringsJsonFormatRoute = StringsJsonFormatRouteImport.update({
 const StringsCompareRoute = StringsCompareRouteImport.update({
   id: '/strings/compare',
   path: '/strings/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectKeyboardRoute = InspectKeyboardRouteImport.update({
+  id: '/inspect/keyboard',
+  path: '/inspect/keyboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenerateJsonRoute = GenerateJsonRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
   '/validate/ids': typeof ValidateIdsRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
   '/validate/ids': typeof ValidateIdsRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
   '/validate/ids': typeof ValidateIdsRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
     | '/validate/ids'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
     | '/validate/ids'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
     | '/validate/ids'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   GenerateIdsRoute: typeof GenerateIdsRoute
   GenerateImageRoute: typeof GenerateImageRoute
   GenerateJsonRoute: typeof GenerateJsonRoute
+  InspectKeyboardRoute: typeof InspectKeyboardRoute
   StringsCompareRoute: typeof StringsCompareRoute
   StringsJsonFormatRoute: typeof StringsJsonFormatRoute
   ValidateIdsRoute: typeof ValidateIdsRoute
@@ -162,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/strings/compare'
       fullPath: '/strings/compare'
       preLoaderRoute: typeof StringsCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspect/keyboard': {
+      id: '/inspect/keyboard'
+      path: '/inspect/keyboard'
+      fullPath: '/inspect/keyboard'
+      preLoaderRoute: typeof InspectKeyboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/generate/json': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenerateIdsRoute: GenerateIdsRoute,
   GenerateImageRoute: GenerateImageRoute,
   GenerateJsonRoute: GenerateJsonRoute,
+  InspectKeyboardRoute: InspectKeyboardRoute,
   StringsCompareRoute: StringsCompareRoute,
   StringsJsonFormatRoute: StringsJsonFormatRoute,
   ValidateIdsRoute: ValidateIdsRoute,
