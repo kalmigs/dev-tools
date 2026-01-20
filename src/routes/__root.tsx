@@ -14,6 +14,7 @@ import {
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { NotFound } from '@/components/errors/not-found';
+import { GlobalSearch } from '@/components/global-search';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -125,7 +126,10 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-      <ThemeToggle onClick={onToggleTheme} />
+      <div className="flex items-center gap-2">
+        <GlobalSearch />
+        <ThemeToggle onClick={onToggleTheme} />
+      </div>
     </nav>
   );
 }
@@ -142,7 +146,10 @@ function MobileNav({ onToggleTheme }: { onToggleTheme: () => void }) {
           <span className="font-semibold text-lg">Dev Tools</span>
         </Link>
       </div>
-      <ThemeToggle onClick={onToggleTheme} />
+      <div className="flex items-center gap-1">
+        <GlobalSearch />
+        <ThemeToggle onClick={onToggleTheme} />
+      </div>
     </nav>
   );
 }

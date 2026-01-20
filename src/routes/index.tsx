@@ -1,108 +1,26 @@
 import { Link } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
+import { ArrowRight, FileJson, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import {
-  ArrowRight,
-  Braces,
-  FileJson,
-  Fingerprint,
-  GitCompare,
-  ImageIcon,
-  Keyboard,
-  Search,
-  Sparkles,
-  ShieldCheck,
-} from 'lucide-react';
+  generatePages,
+  inspectPages,
+  stringPages,
+  validatePages,
+  type PageInfo,
+} from '@/lib/pages';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
-// Tool data
-const generateTools = [
-  {
-    title: 'Faker',
-    description: 'Generate fake data for testing and prototyping',
-    icon: Sparkles,
-    url: '/generate/faker',
-    color: 'from-amber-500 to-orange-600',
-  },
-  {
-    title: 'IDs',
-    description: 'UUIDs, CUIDs, NanoIDs and more',
-    icon: Fingerprint,
-    url: '/generate/ids',
-    color: 'from-lime-500 to-green-600',
-  },
-  {
-    title: 'Image',
-    description: 'Placeholders, colors, gradients, and patterns',
-    icon: ImageIcon,
-    url: '/generate/image',
-    color: 'from-violet-500 to-purple-600',
-  },
-  {
-    title: 'JSON',
-    description: 'Random JSON structures and schemas',
-    icon: Braces,
-    url: '/generate/json',
-    color: 'from-emerald-500 to-teal-600',
-  },
-];
-
-const stringTools = [
-  {
-    title: 'Compare',
-    description: 'Compare and diff text side by side',
-    icon: GitCompare,
-    url: '/strings/compare',
-    color: 'from-sky-500 to-blue-600',
-  },
-  {
-    title: 'JSON Format',
-    description: 'Format, prettify and validate JSON',
-    icon: FileJson,
-    url: '/strings/json-format',
-    color: 'from-pink-500 to-rose-600',
-  },
-];
-
-const validateTools = [
-  {
-    title: 'IDs',
-    description: 'Validate UUID, CUID, and other ID formats',
-    icon: ShieldCheck,
-    url: '/validate/ids',
-    color: 'from-yellow-400 to-orange-500',
-  },
-];
-
-const inspectTools = [
-  {
-    title: 'Keyboard',
-    description: 'View key codes, events, and modifiers in real-time',
-    icon: Keyboard,
-    url: '/inspect/keyboard',
-    color: 'from-cyan-500 to-teal-600',
-  },
-];
-
 // Components
-function ToolCard({
-  title,
-  description,
-  icon: Icon,
-  url,
-  color,
-}: {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  url: string;
-  color: string;
-}) {
+function ToolCard({ page }: { page: PageInfo }) {
+  const Icon = page.icon;
+  const color = page.color || 'from-gray-500 to-gray-600';
+
   return (
     <Link
-      to={url}
+      to={page.route}
       className="group relative overflow-hidden rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
     >
       <div
@@ -114,8 +32,8 @@ function ToolCard({
         >
           <Icon className="h-5 w-5" />
         </div>
-        <h3 className="mb-1.5 font-semibold text-foreground">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+        <h3 className="mb-1.5 font-semibold text-foreground">{page.title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{page.description}</p>
         <div className="mt-4 flex items-center text-sm font-medium text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           Open tool
           <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -163,29 +81,29 @@ function HomePage() {
 
       {/* Generate Section */}
       <Section title="Generate" icon={Sparkles}>
-        {generateTools.map(tool => (
-          <ToolCard key={tool.url} {...tool} />
+        {generatePages.map(page => (
+          <ToolCard key={page.route} page={page} />
         ))}
       </Section>
 
       {/* Strings Section */}
       <Section title="Strings" icon={FileJson}>
-        {stringTools.map(tool => (
-          <ToolCard key={tool.url} {...tool} />
+        {stringPages.map(page => (
+          <ToolCard key={page.route} page={page} />
         ))}
       </Section>
 
       {/* Validate Section */}
       <Section title="Validate" icon={ShieldCheck}>
-        {validateTools.map(tool => (
-          <ToolCard key={tool.url} {...tool} />
+        {validatePages.map(page => (
+          <ToolCard key={page.route} page={page} />
         ))}
       </Section>
 
       {/* Inspect Section */}
       <Section title="Inspect" icon={Search}>
-        {inspectTools.map(tool => (
-          <ToolCard key={tool.url} {...tool} />
+        {inspectPages.map(page => (
+          <ToolCard key={page.route} page={page} />
         ))}
       </Section>
     </div>

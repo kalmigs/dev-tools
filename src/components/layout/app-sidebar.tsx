@@ -1,18 +1,6 @@
 import { useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  Braces,
-  ChevronDown,
-  FileJson,
-  Fingerprint,
-  GitCompare,
-  Home,
-  ImageIcon,
-  Keyboard,
-  Search,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
+import { ChevronDown, FileJson, Home, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
@@ -29,67 +17,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-
-// Constants
-const generateItems = [
-  {
-    description: 'Generate fake data',
-    icon: Sparkles,
-    title: 'Faker',
-    url: '/generate/faker',
-  },
-  {
-    description: 'UUIDs, CUIDs, and more',
-    icon: Fingerprint,
-    title: 'IDs',
-    url: '/generate/ids',
-  },
-  {
-    description: 'Placeholders, colors, gradients, and patterns',
-    icon: ImageIcon,
-    title: 'Image',
-    url: '/generate/image',
-  },
-  {
-    description: 'Random JSON structures',
-    icon: Braces,
-    title: 'JSON',
-    url: '/generate/json',
-  },
-];
-
-const stringItems = [
-  {
-    description: 'Compare and diff text',
-    icon: GitCompare,
-    title: 'Compare',
-    url: '/strings/compare',
-  },
-  {
-    description: 'Format and prettify JSON',
-    icon: FileJson,
-    title: 'JSON Format',
-    url: '/strings/json-format',
-  },
-];
-
-const validateItems = [
-  {
-    description: 'Validate ID formats',
-    icon: Fingerprint,
-    title: 'IDs',
-    url: '/validate/ids',
-  },
-];
-
-const inspectItems = [
-  {
-    description: 'Inspect keyboard events',
-    icon: Keyboard,
-    title: 'Keyboard',
-    url: '/inspect/keyboard',
-  },
-];
+import { generatePages, inspectPages, stringPages, validatePages } from '@/lib/pages';
 
 // Main component
 export function AppSidebar() {
@@ -148,12 +76,12 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {generateItems.map(item => (
-                        <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
-                            <Link to={item.url} onClick={handleLinkClick}>
-                              <item.icon />
-                              <span>{item.title}</span>
+                      {generatePages.map(page => (
+                        <SidebarMenuSubItem key={page.route}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
+                            <Link to={page.route} onClick={handleLinkClick}>
+                              <page.icon />
+                              <span>{page.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -174,12 +102,12 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {stringItems.map(item => (
-                        <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
-                            <Link to={item.url} onClick={handleLinkClick}>
-                              <item.icon />
-                              <span>{item.title}</span>
+                      {stringPages.map(page => (
+                        <SidebarMenuSubItem key={page.route}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
+                            <Link to={page.route} onClick={handleLinkClick}>
+                              <page.icon />
+                              <span>{page.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -200,12 +128,12 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {validateItems.map(item => (
-                        <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
-                            <Link to={item.url} onClick={handleLinkClick}>
-                              <item.icon />
-                              <span>{item.title}</span>
+                      {validatePages.map(page => (
+                        <SidebarMenuSubItem key={page.route}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
+                            <Link to={page.route} onClick={handleLinkClick}>
+                              <page.icon />
+                              <span>{page.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
@@ -226,12 +154,12 @@ export function AppSidebar() {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub>
-                      {inspectItems.map(item => (
-                        <SidebarMenuSubItem key={item.url}>
-                          <SidebarMenuSubButton asChild isActive={currentPath === item.url}>
-                            <Link to={item.url} onClick={handleLinkClick}>
-                              <item.icon />
-                              <span>{item.title}</span>
+                      {inspectPages.map(page => (
+                        <SidebarMenuSubItem key={page.route}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
+                            <Link to={page.route} onClick={handleLinkClick}>
+                              <page.icon />
+                              <span>{page.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
