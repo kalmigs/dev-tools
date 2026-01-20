@@ -12,30 +12,47 @@ import {
 } from '@/components/ui/command';
 import { useSearch } from '@/hooks/use-search';
 import { type PageInfo } from '@/lib/pages';
+import { useIsMac } from '@/hooks/use-is-mac';
 
-// Detect if user is on Mac
-function useIsMac() {
-  const [isMac, setIsMac] = useState(false);
-
-  useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0);
-  }, []);
-
-  return isMac;
+// Group pages by category with scores for sorting
+interface PageWithScore {
+  page: PageInfo;
+  score: number | undefined;
 }
 
-// Group pages by category
-function groupByCategory(pages: PageInfo[]): Record<string, PageInfo[]> {
-  return pages.reduce(
-    (acc, page) => {
-      if (!acc[page.category]) {
-        acc[page.category] = [];
+function groupByCategory(items: PageWithScore[]): Record<string, PageWithScore[]> {
+  return items.reduce(
+    (acc, item) => {
+      if (!acc[item.page.category]) {
+        acc[item.page.category] = [];
       }
-      acc[page.category].push(page);
+      acc[item.page.category].push(item);
       return acc;
     },
-    {} as Record<string, PageInfo[]>,
+    {} as Record<string, PageWithScore[]>,
   );
+}
+
+// Sort categories by the best (lowest) score of their items
+function sortCategoriesByRelevance(
+  groupedResults: Record<string, PageWithScore[]>,
+  isSearching: boolean,
+): string[] {
+  const categoryOrder = ['Navigation', 'Generate', 'Strings', 'Validate', 'Inspect'];
+  
+  if (!isSearching) {
+    // When not searching, use fixed category order
+    return Object.keys(groupedResults).sort(
+      (a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b),
+    );
+  }
+  
+  // When searching, sort by best relevance score in each category
+  return Object.keys(groupedResults).sort((a, b) => {
+    const bestScoreA = groupedResults[a][0]?.score ?? Infinity;
+    const bestScoreB = groupedResults[b][0]?.score ?? Infinity;
+    return bestScoreA - bestScoreB;
+  });
 }
 
 // Keyboard shortcut display component
@@ -109,21 +126,18 @@ export function GlobalSearch() {
     [navigate],
   );
 
-  // Reset query when dialog closes
-  useEffect(() => {
-    if (!open) {
+  // Handle dialog open state change (reset query when closing)
+  const handleOpenChange = useCallback((isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
       setQuery('');
     }
-  }, [open]);
+  }, []);
 
-  // Group results by category
-  const groupedResults = groupByCategory(results.map(r => r.item));
-
-  // Define category order
-  const categoryOrder = ['Navigation', 'Generate', 'Strings', 'Validate', 'Inspect'];
-  const sortedCategories = Object.keys(groupedResults).sort(
-    (a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b),
-  );
+  // Group results by category (with scores for relevance sorting)
+  const isSearching = query.trim().length > 0;
+  const groupedResults = groupByCategory(results.map(r => ({ page: r.item, score: r.score })));
+  const sortedCategories = sortCategoriesByRelevance(groupedResults, isSearching);
 
   return (
     <>
@@ -140,10 +154,11 @@ export function GlobalSearch() {
       {/* Search dialog */}
       <CommandDialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={handleOpenChange}
         title="Search Pages"
         description="Search for a page by name, description, or keywords"
         showCloseButton={false}
+        shouldFilter={false}
       >
         <CommandInput
           placeholder={`Search pages... ${isMac ? '⌘K' : 'Ctrl+K'}`}
@@ -154,10 +169,10 @@ export function GlobalSearch() {
           <CommandEmpty>No pages found.</CommandEmpty>
           {sortedCategories.map(category => (
             <CommandGroup key={category} heading={category}>
-              {groupedResults[category].map(page => (
+              {groupedResults[category].map(({ page }) => (
                 <CommandItem
                   key={page.route}
-                  value={`${page.title} ${page.description} ${page.keywords.join(' ')}`}
+                  value={`${page.category} ${page.title} ${page.description} ${page.keywords.join(' ')}`}
                   onSelect={() => handleSelect(page)}
                   className="cursor-pointer"
                 >
@@ -186,24 +201,4 @@ export function GlobalSearch() {
       </CommandDialog>
     </>
   );
-}
-
-// Export hook for external control
-export function useGlobalSearch() {
-  const [open, setOpen] = useState(false);
-
-  // Handle keyboard shortcut
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen(open => !open);
-      }
-    };
-
-    document.addEventListener('keydown', down);
-    return () => document.removeEventListener('keydown', down);
-  }, []);
-
-  return { open, setOpen };
 }

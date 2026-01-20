@@ -8,7 +8,14 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import {
+  cn,
+  countWords,
+  normalizeWhitespace,
+  sortObjectKeys,
+  sortArraysInObject,
+  tryParseJson,
+} from '@/lib/utils';
 
 // Types
 type DiffMode = 'inline' | 'side';
@@ -29,53 +36,6 @@ interface CompareResult {
 }
 
 // Utility functions
-function countWords(text: string): number {
-  if (!text.trim()) return 0;
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
-function normalizeWhitespace(text: string): string {
-  return text.replace(/\s+/g, '');
-}
-
-function sortObjectKeys(obj: unknown): unknown {
-  if (Array.isArray(obj)) {
-    return obj.map(sortObjectKeys);
-  }
-  if (obj !== null && typeof obj === 'object') {
-    const sorted: Record<string, unknown> = {};
-    for (const key of Object.keys(obj).sort()) {
-      sorted[key] = sortObjectKeys((obj as Record<string, unknown>)[key]);
-    }
-    return sorted;
-  }
-  return obj;
-}
-
-function sortArraysInObject(obj: unknown): unknown {
-  if (Array.isArray(obj)) {
-    // Sort array elements by their JSON representation for consistent comparison
-    const sorted = obj.map(sortArraysInObject);
-    return sorted.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)));
-  }
-  if (obj !== null && typeof obj === 'object') {
-    const result: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      result[key] = sortArraysInObject(value);
-    }
-    return result;
-  }
-  return obj;
-}
-
-function tryParseJson(text: string): { valid: boolean; parsed: unknown } {
-  try {
-    return { valid: true, parsed: JSON.parse(text) };
-  } catch {
-    return { valid: false, parsed: null };
-  }
-}
-
 function compareStrings(
   a: string,
   b: string,

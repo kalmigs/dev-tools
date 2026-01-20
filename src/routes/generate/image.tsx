@@ -42,7 +42,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { cn, generateRandomId, randomColor } from '@/lib/utils';
 
 // Types
 type BackgroundType = 'solid' | 'gradient';
@@ -145,16 +145,6 @@ const DIRECTION_ANGLES: { angle: number; icon: React.ReactNode }[] = [
 ];
 
 // Helper functions
-function generateId(): string {
-  return Math.random().toString(36).substring(2, 9);
-}
-
-function randomColor(): string {
-  return `#${Math.floor(Math.random() * 16777215)
-    .toString(16)
-    .padStart(6, '0')}`;
-}
-
 function angleToGradientCoords(
   angle: number,
   width: number,
@@ -1063,9 +1053,9 @@ function ImagePage() {
   // Parse colors from URL or use random
   const parseColorsFromUrl = (colorsStr: string | undefined, defaults: string[]): ColorStop[] => {
     if (colorsStr) {
-      return colorsStr.split(',').map(c => ({ color: c.startsWith('#') ? c : `#${c}`, id: generateId() }));
+      return colorsStr.split(',').map(c => ({ color: c.startsWith('#') ? c : `#${c}`, id: generateRandomId() }));
     }
-    return defaults.map(c => ({ color: c, id: generateId() }));
+    return defaults.map(c => ({ color: c, id: generateRandomId() }));
   };
 
   // Initialize from search params
@@ -1324,7 +1314,7 @@ function ImagePage() {
 
   const handleAddGradientColor = () => {
     const newColor = randomColor();
-    const newColors = [...gradientColors, { color: newColor, id: generateId() }];
+    const newColors = [...gradientColors, { color: newColor, id: generateRandomId() }];
     setGradientColors(newColors);
     updateSearchParams({ g_colors: newColors.map(c => c.color.replace('#', '')).join(',') });
   };
@@ -1339,7 +1329,7 @@ function ImagePage() {
 
   const handleAddBgColor = () => {
     const newColor = randomColor();
-    const newColors = [...bgColors, { color: newColor, id: generateId() }];
+    const newColors = [...bgColors, { color: newColor, id: generateRandomId() }];
     setBgColors(newColors);
     updateSearchParams({ bg_colors: newColors.map(c => c.color.replace('#', '')).join(',') });
   };

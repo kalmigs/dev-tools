@@ -25,6 +25,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { hashCode } from '@/lib/utils';
 
 // Types
 type Indentation = '2' | '4' | 'tab' | 'minified';
@@ -276,16 +277,6 @@ function generateJson(config: RandomJsonConfig): unknown {
     results.push(generateRandomObject(config));
   }
   return results;
-}
-
-function hashCode(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash;
-  }
-  return Math.abs(hash);
 }
 
 function formatJson(data: unknown, indentation: Indentation): string {

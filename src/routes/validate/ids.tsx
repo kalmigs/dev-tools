@@ -4,7 +4,7 @@ import { isCuid as isCuid2 } from '@paralleldrive/cuid2';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 import { CheckIcon, XIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { cn, isCuid } from '@/lib/utils';
 
 // Types
 interface ValidationResult {
@@ -14,10 +14,6 @@ interface ValidationResult {
 }
 
 // Helper functions
-function isCuid(id: string): boolean {
-  return /^c[a-z0-9]{24}$/.test(id);
-}
-
 function validateId(input: string): ValidationResult[] {
   const trimmed = input.trim();
 

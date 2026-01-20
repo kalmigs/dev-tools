@@ -24,7 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { cn, sortObjectKeys, stripNulls, escapeStrings } from '@/lib/utils';
 
 // Types
 type Spacing = '2' | '4' | 'tab';
@@ -182,62 +182,6 @@ function getParentPath(path: string): string | null {
   if (lastDot > 0) return path.substring(0, lastDot);
 
   return '$';
-}
-
-function sortKeys(obj: unknown): unknown {
-  if (Array.isArray(obj)) return obj.map(sortKeys);
-  if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj)
-      .sort((a, b) => a.localeCompare(b))
-      .reduce(
-        (acc, key) => {
-          acc[key] = sortKeys((obj as Record<string, unknown>)[key]);
-          return acc;
-        },
-        {} as Record<string, unknown>,
-      );
-  }
-  return obj;
-}
-
-function stripNulls(obj: unknown): unknown {
-  if (Array.isArray(obj)) {
-    return obj.map(stripNulls).filter(v => v !== null);
-  }
-  if (obj !== null && typeof obj === 'object') {
-    return Object.entries(obj).reduce(
-      (acc, [key, value]) => {
-        if (value !== null) {
-          acc[key] = stripNulls(value);
-        }
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
-  }
-  return obj;
-}
-
-function escapeStrings(obj: unknown): unknown {
-  if (typeof obj === 'string') {
-    // Convert special characters to visible escape sequences
-    return obj
-      .replace(/\\/g, '\\\\')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t');
-  }
-  if (Array.isArray(obj)) return obj.map(escapeStrings);
-  if (obj !== null && typeof obj === 'object') {
-    return Object.entries(obj).reduce(
-      (acc, [key, value]) => {
-        acc[key] = escapeStrings(value);
-        return acc;
-      },
-      {} as Record<string, unknown>,
-    );
-  }
-  return obj;
 }
 
 function getCollapsiblePaths(obj: unknown, prefix = '$'): string[] {
@@ -1236,7 +1180,7 @@ function JsonFormatPage() {
       let transformed = parsed;
 
       // Apply transformations
-      if (sort) transformed = sortKeys(transformed);
+      if (sort) transformed = sortObjectKeys(transformed);
       if (stripNull) transformed = stripNulls(transformed);
       if (escape) transformed = escapeStrings(transformed);
 

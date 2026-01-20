@@ -13,7 +13,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
+import { cn, formatTime } from '@/lib/utils';
 
 // Search params type
 interface SearchParams {
@@ -178,16 +178,6 @@ const ARROW_KEYS = [
 ];
 
 // Helper functions
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString('en-US', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    fractionalSecondDigits: 3,
-  });
-}
-
 function generateChordString(pressedKeys: Set<string>, modifiers: KeyEvent['modifiers']): string {
   const parts: string[] = [];
   if (modifiers.ctrl) parts.push('Ctrl');

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Fuse, { type IFuseOptions, type FuseResultMatch } from 'fuse.js';
 import { allPages, type PageInfo } from '@/lib/pages';
+import { useDebounce } from '@/hooks/use-debounce';
 
 // Fuse.js configuration for fuzzy searching
 const fuseOptions: IFuseOptions<PageInfo> = {
@@ -15,6 +16,7 @@ const fuseOptions: IFuseOptions<PageInfo> = {
   includeScore: true,
   includeMatches: true,
   minMatchCharLength: 1,
+  useExtendedSearch: true, // Enable extended search for OR queries
 };
 
 export interface SearchResult {
@@ -26,28 +28,26 @@ export interface SearchResult {
 // Create fuse instance once
 const fuse = new Fuse(allPages, fuseOptions);
 
+// Transform multi-word query into OR search (e.g., "strings compare" -> "strings | compare")
+// Also handles path-like queries (e.g., "strings/compare" -> "strings | compare")
+function transformQueryForExtendedSearch(query: string): string {
+  // Split on whitespace or slash to handle both "strings compare" and "strings/compare"
+  const words = query.trim().split(/[\s/]+/).filter(Boolean);
+  if (words.length <= 1) {
+    return query.trim();
+  }
+  // Use OR operator for multi-word queries so each word is searched independently
+  return words.join(' | ');
+}
+
 // Perform search synchronously
 function performSearch(query: string): SearchResult[] {
   if (!query.trim()) {
     // Show all pages when query is empty
     return allPages.map(item => ({ item }));
   }
-  return fuse.search(query);
-}
-
-// Simple debounce hook
-export function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-
-  return debouncedValue;
+  const extendedQuery = transformQueryForExtendedSearch(query);
+  return fuse.search(extendedQuery);
 }
 
 export function useSearch(query: string, debounceMs = 150) {
