@@ -514,6 +514,8 @@ function ComparePage() {
           />
           <p className="text-xs text-muted-foreground">
             {wordCountA} {wordCountA === 1 ? 'word' : 'words'}
+            <span className="mx-1.5 text-muted-foreground/50">|</span>
+            {stringA.length} {stringA.length === 1 ? 'character' : 'characters'}
           </p>
         </div>
         <div className="space-y-2">
@@ -526,6 +528,8 @@ function ComparePage() {
           />
           <p className="text-xs text-muted-foreground">
             {wordCountB} {wordCountB === 1 ? 'word' : 'words'}
+            <span className="mx-1.5 text-muted-foreground/50">|</span>
+            {stringB.length} {stringB.length === 1 ? 'character' : 'characters'}
           </p>
         </div>
       </div>
