@@ -18,6 +18,7 @@ import { Route as GenerateJsonRouteImport } from './routes/generate/json'
 import { Route as GenerateImageRouteImport } from './routes/generate/image'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
 import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
+import { Route as ConvertTimestampRouteImport } from './routes/convert/timestamp'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,9 +65,15 @@ const GenerateFakerRoute = GenerateFakerRouteImport.update({
   path: '/generate/faker',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConvertTimestampRoute = ConvertTimestampRouteImport.update({
+  id: '/convert/timestamp',
+  path: '/convert/timestamp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/convert/timestamp'
     | '/generate/faker'
     | '/generate/ids'
     | '/generate/image'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/convert/timestamp'
     | '/generate/faker'
     | '/generate/ids'
     | '/generate/image'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/convert/timestamp'
     | '/generate/faker'
     | '/generate/ids'
     | '/generate/image'
@@ -137,6 +149,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConvertTimestampRoute: typeof ConvertTimestampRoute
   GenerateFakerRoute: typeof GenerateFakerRoute
   GenerateIdsRoute: typeof GenerateIdsRoute
   GenerateImageRoute: typeof GenerateImageRoute
@@ -212,11 +225,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenerateFakerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/convert/timestamp': {
+      id: '/convert/timestamp'
+      path: '/convert/timestamp'
+      fullPath: '/convert/timestamp'
+      preLoaderRoute: typeof ConvertTimestampRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConvertTimestampRoute: ConvertTimestampRoute,
   GenerateFakerRoute: GenerateFakerRoute,
   GenerateIdsRoute: GenerateIdsRoute,
   GenerateImageRoute: GenerateImageRoute,

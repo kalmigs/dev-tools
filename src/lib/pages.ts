@@ -1,5 +1,6 @@
 import {
   Braces,
+  Clock,
   FileJson,
   Fingerprint,
   GitCompare,
@@ -129,6 +130,20 @@ export const inspectPages: PageInfo[] = [
   },
 ];
 
+// Convert pages
+export const convertPages: PageInfo[] = [
+  {
+    route: '/convert/timestamp',
+    title: 'Timestamp',
+    description: 'Convert Unix timestamps to dates with timezone support',
+    keywords: ['timestamp', 'unix', 'epoch', 'date', 'time', 'timezone', 'utc', 'convert', 'relative'],
+    tags: ['converter', 'time', 'date'],
+    category: 'Convert',
+    icon: Clock,
+    color: 'from-indigo-500 to-violet-600',
+  },
+];
+
 // All pages combined for search
 export const allPages: PageInfo[] = [
   homePage,
@@ -136,6 +151,7 @@ export const allPages: PageInfo[] = [
   ...stringPages,
   ...validatePages,
   ...inspectPages,
+  ...convertPages,
 ];
 
 // Get pages by category

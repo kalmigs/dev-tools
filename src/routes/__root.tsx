@@ -123,6 +123,21 @@ function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Convert</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-48 gap-1 p-2">
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link to="/convert/timestamp">
+                        <div className="font-medium">Timestamp</div>
+                        <p className="text-muted-foreground text-xs">Unix timestamps & timezones</p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>

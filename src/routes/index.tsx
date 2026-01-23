@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { createFileRoute } from '@tanstack/react-router';
-import { ArrowRight, FileJson, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, ArrowRight, FileJson, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import {
+  convertPages,
   generatePages,
   inspectPages,
   stringPages,
@@ -103,6 +104,13 @@ function HomePage() {
       {/* Inspect Section */}
       <Section title="Inspect" icon={Search}>
         {inspectPages.map(page => (
+          <ToolCard key={page.route} page={page} />
+        ))}
+      </Section>
+
+      {/* Convert Section */}
+      <Section title="Convert" icon={ArrowLeftRight}>
+        {convertPages.map(page => (
           <ToolCard key={page.route} page={page} />
         ))}
       </Section>

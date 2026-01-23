@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { ChevronDown, FileJson, Home, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, ChevronDown, FileJson, Home, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
@@ -17,7 +17,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { generatePages, inspectPages, stringPages, validatePages } from '@/lib/pages';
+import { convertPages, generatePages, inspectPages, stringPages, validatePages } from '@/lib/pages';
 
 // Main component
 export function AppSidebar() {
@@ -25,10 +25,11 @@ export function AppSidebar() {
   const currentPath = routerState.location.pathname;
   const { setOpenMobile } = useSidebar();
 
+  const [convertOpen, setConvertOpen] = useState(currentPath.startsWith('/convert'));
   const [generateOpen, setGenerateOpen] = useState(currentPath.startsWith('/generate'));
+  const [inspectOpen, setInspectOpen] = useState(currentPath.startsWith('/inspect'));
   const [stringsOpen, setStringsOpen] = useState(currentPath.startsWith('/strings'));
   const [validateOpen, setValidateOpen] = useState(currentPath.startsWith('/validate'));
-  const [inspectOpen, setInspectOpen] = useState(currentPath.startsWith('/inspect'));
 
   const handleLinkClick = () => {
     setOpenMobile(false);
@@ -155,6 +156,32 @@ export function AppSidebar() {
                   <CollapsibleContent>
                     <SidebarMenuSub>
                       {inspectPages.map(page => (
+                        <SidebarMenuSubItem key={page.route}>
+                          <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
+                            <Link to={page.route} onClick={handleLinkClick}>
+                              <page.icon />
+                              <span>{page.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      ))}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+
+              <Collapsible open={convertOpen} onOpenChange={setConvertOpen}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      <ArrowLeftRight />
+                      <span>Convert</span>
+                      <ChevronDown className="ml-auto transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {convertPages.map(page => (
                         <SidebarMenuSubItem key={page.route}>
                           <SidebarMenuSubButton asChild isActive={currentPath === page.route}>
                             <Link to={page.route} onClick={handleLinkClick}>
