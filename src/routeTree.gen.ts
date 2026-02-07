@@ -14,6 +14,7 @@ import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
 import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
 import { Route as StringsCompareRouteImport } from './routes/strings/compare'
 import { Route as InspectKeyboardRouteImport } from './routes/inspect/keyboard'
+import { Route as GenerateQrCodeRouteImport } from './routes/generate/qr-code'
 import { Route as GenerateJsonRouteImport } from './routes/generate/json'
 import { Route as GenerateImageRouteImport } from './routes/generate/image'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
@@ -43,6 +44,11 @@ const StringsCompareRoute = StringsCompareRouteImport.update({
 const InspectKeyboardRoute = InspectKeyboardRouteImport.update({
   id: '/inspect/keyboard',
   path: '/inspect/keyboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateQrCodeRoute = GenerateQrCodeRouteImport.update({
+  id: '/generate/qr-code',
+  path: '/generate/qr-code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenerateJsonRoute = GenerateJsonRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/generate/qr-code': typeof GenerateQrCodeRoute
   '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/generate/qr-code': typeof GenerateQrCodeRoute
   '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
+  '/generate/qr-code': typeof GenerateQrCodeRoute
   '/inspect/keyboard': typeof InspectKeyboardRoute
   '/strings/compare': typeof StringsCompareRoute
   '/strings/json-format': typeof StringsJsonFormatRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/generate/qr-code'
     | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/generate/qr-code'
     | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
+    | '/generate/qr-code'
     | '/inspect/keyboard'
     | '/strings/compare'
     | '/strings/json-format'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   GenerateIdsRoute: typeof GenerateIdsRoute
   GenerateImageRoute: typeof GenerateImageRoute
   GenerateJsonRoute: typeof GenerateJsonRoute
+  GenerateQrCodeRoute: typeof GenerateQrCodeRoute
   InspectKeyboardRoute: typeof InspectKeyboardRoute
   StringsCompareRoute: typeof StringsCompareRoute
   StringsJsonFormatRoute: typeof StringsJsonFormatRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/inspect/keyboard'
       fullPath: '/inspect/keyboard'
       preLoaderRoute: typeof InspectKeyboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/qr-code': {
+      id: '/generate/qr-code'
+      path: '/generate/qr-code'
+      fullPath: '/generate/qr-code'
+      preLoaderRoute: typeof GenerateQrCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/generate/json': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenerateIdsRoute: GenerateIdsRoute,
   GenerateImageRoute: GenerateImageRoute,
   GenerateJsonRoute: GenerateJsonRoute,
+  GenerateQrCodeRoute: GenerateQrCodeRoute,
   InspectKeyboardRoute: InspectKeyboardRoute,
   StringsCompareRoute: StringsCompareRoute,
   StringsJsonFormatRoute: StringsJsonFormatRoute,

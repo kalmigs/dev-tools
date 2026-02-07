@@ -10,6 +10,7 @@ A collection of browser-based developer utilities for generating, formatting, an
 - **IDs** - Generate unique identifiers (UUID, CUID, CUID2, NanoID)
 - **Image** - Generate placeholder images, colors, gradients, and patterns
 - **JSON** - Generate random JSON structures
+- **QR Code** - Generate QR codes with optional embedded logo, customize colors and download as PNG
 
 ### Strings
 

@@ -7,6 +7,7 @@ import {
   Home,
   ImageIcon,
   Keyboard,
+  QrCodeIcon,
   ShieldCheck,
   Sparkles,
   type LucideIcon,
@@ -95,6 +96,25 @@ export const generatePages: PageInfo[] = [
     category: 'Generate',
     icon: Braces,
     color: 'from-emerald-500 to-teal-600',
+  },
+  {
+    route: '/generate/qr-code',
+    title: 'QR Code',
+    description: 'Generate QR codes with optional embedded logo',
+    keywords: [
+      'qr',
+      'qr code',
+      'quick response',
+      'barcode',
+      'logo',
+      'customize',
+      'download',
+      'png',
+    ],
+    tags: ['generator', 'visual', 'qr'],
+    category: 'Generate',
+    icon: QrCodeIcon,
+    color: 'from-blue-500 to-cyan-600',
   },
 ];
 

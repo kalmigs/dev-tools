@@ -20,6 +20,12 @@ alwaysApply: true
 - `src/hooks/` - Custom React hooks (use-*.ts)
 - `src/lib/` - Utilities and helpers (non-hook functions)
 
+## Code Reuse
+
+- Reuse as much as possible
+- If code is generic reusable code, put it directly in reuse folders (`src/hooks/`, `src/lib/`, `src/components/ui/`, etc.)
+- Don't duplicate code - extract shared logic into reusable utilities, hooks, or components
+
 ## Code Style
 
 - Prettier for formatting (run `pnpm format`)
