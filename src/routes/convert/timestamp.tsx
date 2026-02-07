@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  CopyIcon,
-  PlusIcon,
-  XIcon,
-} from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, CopyIcon, PlusIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -19,11 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 // Types
@@ -130,10 +120,7 @@ for (const [tz, abbrs] of Object.entries(TIMEZONE_ABBREVIATIONS)) {
   }
 }
 
-const DEFAULT_OUTPUT_TIMEZONES = [
-  'UTC',
-  Intl.DateTimeFormat().resolvedOptions().timeZone,
-];
+const DEFAULT_OUTPUT_TIMEZONES = ['UTC', Intl.DateTimeFormat().resolvedOptions().timeZone];
 
 const LOCAL_STORAGE_KEY = 'timestamp-converter-timezones';
 
@@ -255,7 +242,7 @@ function parseInput(
   try {
     // Normalize the input to ISO-like format
     const normalizedInput = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
-    
+
     // Parse the date components
     const parts = normalizedInput.match(/(\d{4})-?(\d{2})-?(\d{2})T?(\d{2})?:?(\d{2})?:?(\d{2})?/);
     if (!parts) {
@@ -263,17 +250,19 @@ function parseInput(
     }
 
     const [, year, month, day, hour = '0', minute = '0', second = '0'] = parts;
-    
+
     // Create a UTC date with these components
-    const utcDate = new Date(Date.UTC(
-      parseInt(year),
-      parseInt(month) - 1,
-      parseInt(day),
-      parseInt(hour),
-      parseInt(minute),
-      parseInt(second)
-    ));
-    
+    const utcDate = new Date(
+      Date.UTC(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hour),
+        parseInt(minute),
+        parseInt(second),
+      ),
+    );
+
     if (isNaN(utcDate.getTime())) {
       return { date: null, error: 'Invalid date format' };
     }
@@ -289,27 +278,27 @@ function parseInput(
       second: '2-digit',
       hour12: false,
     });
-    
+
     // Format the UTC date in target timezone and parse it back
     const partsInTz = formatter.formatToParts(utcDate);
     const getPart = (type: string) => partsInTz.find(p => p.type === type)?.value ?? '0';
-    
+
     const tzYear = parseInt(getPart('year'));
     const tzMonth = parseInt(getPart('month')) - 1;
     const tzDay = parseInt(getPart('day'));
     const tzHour = parseInt(getPart('hour'));
     const tzMinute = parseInt(getPart('minute'));
     const tzSecond = parseInt(getPart('second'));
-    
+
     // Create what the target timezone thinks is this time in UTC
     const tzAsUtc = new Date(Date.UTC(tzYear, tzMonth, tzDay, tzHour, tzMinute, tzSecond));
-    
+
     // The difference tells us the timezone offset
     const offsetMs = tzAsUtc.getTime() - utcDate.getTime();
-    
+
     // Adjust: we want the UTC time where inputTimezone shows our input values
     const date = new Date(utcDate.getTime() - offsetMs);
-    
+
     if (isNaN(date.getTime())) {
       return { date: null, error: 'Invalid date format' };
     }
@@ -392,9 +381,7 @@ function InputControls({
     <div className="flex flex-col gap-6">
       {/* Input Field */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-muted-foreground">
-          Timestamp or Date
-        </label>
+        <label className="text-sm font-medium text-muted-foreground">Timestamp or Date</label>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Input
@@ -418,18 +405,17 @@ function InputControls({
             Now
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Enter a Unix timestamp or a date string
-        </p>
+        <p className="text-xs text-muted-foreground">Enter a Unix timestamp or a date string</p>
       </div>
 
       {/* Timestamp Format - only show for numeric input */}
       {isNumericTimestamp(inputValue.trim()) && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Timestamp Format
-          </label>
-          <Select value={timestampFormat} onValueChange={v => onTimestampFormatChange(v as TimestampFormat)}>
+          <label className="text-sm font-medium text-muted-foreground">Timestamp Format</label>
+          <Select
+            value={timestampFormat}
+            onValueChange={v => onTimestampFormatChange(v as TimestampFormat)}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -445,9 +431,7 @@ function InputControls({
       {/* Input Timezone - only show when applicable */}
       {shouldShowInputTimezone(inputValue) && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-muted-foreground">
-            Input Timezone
-          </label>
+          <label className="text-sm font-medium text-muted-foreground">Input Timezone</label>
           <Select value={inputTimezone} onValueChange={onInputTimezoneChange}>
             <SelectTrigger className="w-[240px]">
               <SelectValue />
@@ -463,9 +447,7 @@ function InputControls({
               </SelectGroup>
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
-            Interpret input as this timezone
-          </p>
+          <p className="text-xs text-muted-foreground">Interpret input as this timezone</p>
         </div>
       )}
 
@@ -513,7 +495,11 @@ function OutputSection({
 
   const formats = [
     { key: 'iso', label: 'ISO 8601', value: parsedDate.toISOString() },
-    { key: 'unix-s', label: 'Unix (seconds)', value: Math.floor(parsedDate.getTime() / 1000).toString() },
+    {
+      key: 'unix-s',
+      label: 'Unix (seconds)',
+      value: Math.floor(parsedDate.getTime() / 1000).toString(),
+    },
     { key: 'unix-ms', label: 'Unix (milliseconds)', value: parsedDate.getTime().toString() },
     { key: 'rfc2822', label: 'RFC 2822', value: parsedDate.toUTCString() },
     { key: 'relative', label: 'Relative', value: getRelativeTime(parsedDate) },
@@ -523,12 +509,8 @@ function OutputSection({
     <div className="flex flex-col gap-6 h-full">
       {/* Parsed Result */}
       <div className="border rounded-lg p-4 bg-muted/30">
-        <div className="text-lg font-medium">
-          {formatDateInTimezone(parsedDate, localTz)}
-        </div>
-        <div className="text-sm text-muted-foreground mt-1">
-          {getRelativeTime(parsedDate)}
-        </div>
+        <div className="text-lg font-medium">{formatDateInTimezone(parsedDate, localTz)}</div>
+        <div className="text-sm text-muted-foreground mt-1">{getRelativeTime(parsedDate)}</div>
       </div>
 
       {/* Formats */}
@@ -870,10 +852,7 @@ export const Route = createFileRoute('/convert/timestamp')({
         typeof search.inputTz === 'string' && search.inputTz.length > 0
           ? search.inputTz
           : undefined,
-      value:
-        typeof search.value === 'string' && search.value.length > 0
-          ? search.value
-          : undefined,
+      value: typeof search.value === 'string' && search.value.length > 0 ? search.value : undefined,
     };
   },
 });

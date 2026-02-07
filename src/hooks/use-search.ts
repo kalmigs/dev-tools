@@ -32,7 +32,10 @@ const fuse = new Fuse(allPages, fuseOptions);
 // Also handles path-like queries (e.g., "strings/compare" -> "strings | compare")
 function transformQueryForExtendedSearch(query: string): string {
   // Split on whitespace or slash to handle both "strings compare" and "strings/compare"
-  const words = query.trim().split(/[\s/]+/).filter(Boolean);
+  const words = query
+    .trim()
+    .split(/[\s/]+/)
+    .filter(Boolean);
   if (words.length <= 1) {
     return query.trim();
   }

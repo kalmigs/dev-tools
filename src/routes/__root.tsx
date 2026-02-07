@@ -1,183 +1,11 @@
 import { useEffect, useState } from 'react';
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
 import { NotFound } from '@/components/errors/not-found';
-import { GlobalSearch } from '@/components/global-search';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { useIsMobile } from '@/hooks/use-mobile';
-
-// Subcomponents
-function DesktopNav({ onToggleTheme }: { onToggleTheme: () => void }) {
-  return (
-    <nav className="sticky top-0 z-50 px-2 py-2 border-b border-border bg-card flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm">
-            DT
-          </div>
-          <span className="font-semibold text-lg">Dev Tools</span>
-        </Link>
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Generate</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-48 gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/generate/faker">
-                        <div className="font-medium">Faker</div>
-                        <p className="text-muted-foreground text-xs">Generate fake data</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/generate/ids">
-                        <div className="font-medium">IDs</div>
-                        <p className="text-muted-foreground text-xs">UUIDs, CUIDs, and more</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/generate/image">
-                        <div className="font-medium">Image</div>
-                        <p className="text-muted-foreground text-xs">Placeholders, colors, gradients, patterns</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/generate/json">
-                        <div className="font-medium">JSON</div>
-                        <p className="text-muted-foreground text-xs">Random JSON structures</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Strings</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-48 gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/strings/compare">
-                        <div className="font-medium">Compare</div>
-                        <p className="text-muted-foreground text-xs">Compare and diff text</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/strings/json-format">
-                        <div className="font-medium">JSON Format</div>
-                        <p className="text-muted-foreground text-xs">Format and prettify JSON</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Validate</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-48 gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/validate/ids">
-                        <div className="font-medium">IDs</div>
-                        <p className="text-muted-foreground text-xs">Validate ID formats</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Inspect</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-48 gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/inspect/keyboard">
-                        <div className="font-medium">Keyboard</div>
-                        <p className="text-muted-foreground text-xs">Key codes, events & modifiers</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Convert</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <ul className="grid w-48 gap-1 p-2">
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link to="/convert/timestamp">
-                        <div className="font-medium">Timestamp</div>
-                        <p className="text-muted-foreground text-xs">Unix timestamps & timezones</p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-      </div>
-      <div className="flex items-center gap-2">
-        <GlobalSearch />
-        <ThemeToggle onClick={onToggleTheme} />
-      </div>
-    </nav>
-  );
-}
-
-function MobileNav({ onToggleTheme }: { onToggleTheme: () => void }) {
-  return (
-    <nav className="sticky top-0 z-50 px-2 py-2 border-b border-border bg-card flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <SidebarTrigger />
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xs">
-            DT
-          </div>
-          <span className="font-semibold text-lg">Dev Tools</span>
-        </Link>
-      </div>
-      <div className="flex items-center gap-1">
-        <GlobalSearch />
-        <ThemeToggle onClick={onToggleTheme} />
-      </div>
-    </nav>
-  );
-}
-
-function ThemeToggle({ onClick }: { onClick: () => void }) {
-  return (
-    <Button variant="ghost" size="icon" onClick={onClick} aria-label="Toggle theme">
-      <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  );
-}
+import { TopNav } from '@/components/layout/TopNav';
 
 // Main component
 function RootLayout() {
@@ -190,8 +18,6 @@ function RootLayout() {
     return 'light';
   });
 
-  const isMobile = useIsMobile();
-
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
@@ -201,33 +27,18 @@ function RootLayout() {
 
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
-  // Render with SidebarProvider for mobile
-  if (isMobile) {
-    return (
-      <SidebarProvider defaultOpen={false}>
-        <AppSidebar />
-        <div className="min-h-screen flex flex-col flex-1">
-          <MobileNav onToggleTheme={toggleTheme} />
-          <main className="flex-1 p-4">
-            <Outlet />
-          </main>
-        </div>
-        <Toaster />
-        <TanStackRouterDevtools />
-      </SidebarProvider>
-    );
-  }
-
-  // Desktop layout
   return (
-    <div className="min-h-screen flex flex-col">
-      <DesktopNav onToggleTheme={toggleTheme} />
-      <main className="flex-1 p-6">
-        <Outlet />
-      </main>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <TopNav onToggleTheme={toggleTheme} theme={theme} />
+        <main className="flex-1 p-6">
+          <Outlet />
+        </main>
+      </SidebarInset>
       <Toaster />
       <TanStackRouterDevtools />
-    </div>
+    </SidebarProvider>
   );
 }
 

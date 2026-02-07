@@ -202,7 +202,13 @@ function generateChordString(pressedKeys: Set<string>, modifiers: KeyEvent['modi
   return parts.join(' + ') || 'None';
 }
 
-function generateCodeSnippetFromChord(chord: { keys: Set<string>; modifiers: KeyEvent['modifiers']; mainKeys: { key: string; code: string }[] } | null): string {
+function generateCodeSnippetFromChord(
+  chord: {
+    keys: Set<string>;
+    modifiers: KeyEvent['modifiers'];
+    mainKeys: { key: string; code: string }[];
+  } | null,
+): string {
   if (!chord || chord.mainKeys.length === 0) return '// Press a key to generate code';
 
   const conditions: string[] = [];
@@ -210,7 +216,7 @@ function generateCodeSnippetFromChord(chord: { keys: Set<string>; modifiers: Key
   if (chord.modifiers.alt) conditions.push('e.altKey');
   if (chord.modifiers.shift) conditions.push('e.shiftKey');
   if (chord.modifiers.meta) conditions.push('e.metaKey');
-  
+
   // Add conditions for all non-modifier keys
   if (chord.mainKeys.length === 1) {
     conditions.push(`e.key === '${chord.mainKeys[0].key}'`);
@@ -224,13 +230,23 @@ function generateCodeSnippetFromChord(chord: { keys: Set<string>; modifiers: Key
 }
 
 // Subcomponents
-function KeyDisplay({ currentKey, pressedKeys }: { currentKey: KeyEvent | null; pressedKeys: Set<string> }) {
+function KeyDisplay({
+  currentKey,
+  pressedKeys,
+}: {
+  currentKey: KeyEvent | null;
+  pressedKeys: Set<string>;
+}) {
   return (
     <div className="flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed border-border bg-gradient-to-b from-muted/30 to-muted/10 min-h-[180px]">
       {currentKey ? (
         <>
           <div className="text-6xl font-mono font-bold mb-4 bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent animate-in zoom-in-50 duration-150">
-            {currentKey.key === ' ' ? '␣' : currentKey.key.length === 1 ? currentKey.key.toUpperCase() : currentKey.key}
+            {currentKey.key === ' '
+              ? '␣'
+              : currentKey.key.length === 1
+                ? currentKey.key.toUpperCase()
+                : currentKey.key}
           </div>
           <div className="text-sm text-muted-foreground font-mono">{currentKey.code}</div>
           <div className="mt-2 flex items-center gap-2">
@@ -267,7 +283,7 @@ function ModifierBadges({ modifiers }: { modifiers: KeyEvent['modifiers'] | null
             'px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150',
             badge.active
               ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105'
-              : 'bg-muted text-muted-foreground'
+              : 'bg-muted text-muted-foreground',
           )}
         >
           {badge.label}
@@ -292,20 +308,41 @@ function EventProperties({
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
-  const properties = event ? [
-    { key: 'key', value: JSON.stringify(event.key), description: 'Key value' },
-    { key: 'code', value: JSON.stringify(event.code), description: 'Physical key' },
-    ...(showDeprecated
-      ? [
-          { key: 'keyCode', value: String(event.keyCode), description: '(deprecated)', deprecated: true },
-          { key: 'which', value: String(event.which), description: '(deprecated)', deprecated: true },
-          { key: 'charCode', value: String(event.charCode), description: '(deprecated)', deprecated: true },
-        ]
-      : []),
-    { key: 'location', value: `${event.location} (${LOCATION_MAP[event.location] || 'Unknown'})`, description: 'Key location' },
-    { key: 'repeat', value: String(event.repeat), description: 'Auto-repeat' },
-    { key: 'isComposing', value: String(event.isComposing), description: 'IME composition' },
-  ] : [];
+  const properties = event
+    ? [
+        { key: 'key', value: JSON.stringify(event.key), description: 'Key value' },
+        { key: 'code', value: JSON.stringify(event.code), description: 'Physical key' },
+        ...(showDeprecated
+          ? [
+              {
+                key: 'keyCode',
+                value: String(event.keyCode),
+                description: '(deprecated)',
+                deprecated: true,
+              },
+              {
+                key: 'which',
+                value: String(event.which),
+                description: '(deprecated)',
+                deprecated: true,
+              },
+              {
+                key: 'charCode',
+                value: String(event.charCode),
+                description: '(deprecated)',
+                deprecated: true,
+              },
+            ]
+          : []),
+        {
+          key: 'location',
+          value: `${event.location} (${LOCATION_MAP[event.location] || 'Unknown'})`,
+          description: 'Key location',
+        },
+        { key: 'repeat', value: String(event.repeat), description: 'Auto-repeat' },
+        { key: 'isComposing', value: String(event.isComposing), description: 'IME composition' },
+      ]
+    : [];
 
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="border rounded-lg overflow-hidden">
@@ -325,7 +362,7 @@ function EventProperties({
                 key={prop.key}
                 className={cn(
                   'flex items-center justify-between px-4 py-2 hover:bg-muted/30 transition-colors group',
-                  prop.deprecated && 'opacity-60'
+                  prop.deprecated && 'opacity-60',
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -373,7 +410,7 @@ function VisualKeyboard({ pressedKeys }: { pressedKeys: Set<string> }) {
                     'border border-border',
                     isPressed
                       ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-95 border-primary'
-                      : 'bg-background hover:bg-muted/50'
+                      : 'bg-background hover:bg-muted/50',
                   )}
                 >
                   {key.label}
@@ -397,7 +434,7 @@ function VisualKeyboard({ pressedKeys }: { pressedKeys: Set<string> }) {
                       'border border-border',
                       isPressed
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-95 border-primary'
-                        : 'bg-background hover:bg-muted/50'
+                        : 'bg-background hover:bg-muted/50',
                     )}
                   >
                     {key.label}
@@ -416,7 +453,7 @@ function VisualKeyboard({ pressedKeys }: { pressedKeys: Set<string> }) {
                       'border border-border',
                       isPressed
                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/40 scale-95 border-primary'
-                        : 'bg-background hover:bg-muted/50'
+                        : 'bg-background hover:bg-muted/50',
                     )}
                   >
                     {key.label}
@@ -454,7 +491,8 @@ function EventHistory({
         </button>
         <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">
-            Max simultaneous: <span className="font-mono font-medium text-foreground">{maxSimultaneous}</span>
+            Max simultaneous:{' '}
+            <span className="font-mono font-medium text-foreground">{maxSimultaneous}</span>
           </span>
           <Button variant="ghost" size="sm" onClick={onClear} className="gap-1.5">
             <TrashIcon className="size-3.5" />
@@ -479,7 +517,7 @@ function EventHistory({
                     'px-2 py-0.5 rounded text-xs font-medium',
                     event.type === 'keydown' && 'bg-green-500/10 text-green-600',
                     event.type === 'keyup' && 'bg-red-500/10 text-red-600',
-                    event.type === 'keypress' && 'bg-blue-500/10 text-blue-600'
+                    event.type === 'keypress' && 'bg-blue-500/10 text-blue-600',
                   )}
                 >
                   {event.type}
@@ -487,13 +525,27 @@ function EventHistory({
                 <code className="font-mono text-xs">{JSON.stringify(event.key)}</code>
                 <code className="font-mono text-xs text-muted-foreground">{event.code}</code>
                 <div className="flex gap-1 flex-1">
-                  {event.modifiers.ctrl && <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Ctrl</span>}
-                  {event.modifiers.alt && <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Alt</span>}
-                  {event.modifiers.shift && <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Shift</span>}
-                  {event.modifiers.meta && <span className="text-xs px-1.5 py-0.5 rounded bg-muted">⌘</span>}
-                  {event.repeat && <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600">repeat</span>}
+                  {event.modifiers.ctrl && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Ctrl</span>
+                  )}
+                  {event.modifiers.alt && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Alt</span>
+                  )}
+                  {event.modifiers.shift && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted">Shift</span>
+                  )}
+                  {event.modifiers.meta && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-muted">⌘</span>
+                  )}
+                  {event.repeat && (
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600">
+                      repeat
+                    </span>
+                  )}
                 </div>
-                <span className="text-xs text-muted-foreground font-mono">{formatTime(event.timestamp)}</span>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {formatTime(event.timestamp)}
+                </span>
               </div>
             ))
           )}
@@ -544,7 +596,9 @@ function OptionsPanel({
             />
           </label>
           <label className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Capture keypress <span className="text-xs">(deprecated)</span></span>
+            <span className="text-sm text-muted-foreground">
+              Capture keypress <span className="text-xs">(deprecated)</span>
+            </span>
             <Switch
               checked={options.captureKeypress}
               onCheckedChange={v => onChange({ ...options, captureKeypress: v })}
@@ -575,7 +629,11 @@ function CodeSnippet({
   onCopy,
   copied,
 }: {
-  chord: { keys: Set<string>; modifiers: KeyEvent['modifiers']; mainKeys: { key: string; code: string }[] } | null;
+  chord: {
+    keys: Set<string>;
+    modifiers: KeyEvent['modifiers'];
+    mainKeys: { key: string; code: string }[];
+  } | null;
   onCopy: () => void;
   copied: boolean;
 }) {
@@ -629,18 +687,40 @@ function KeyboardPage() {
     setOptions(newOptions);
     navigate({
       search: {
-        keydown: newOptions.captureKeydown !== DEFAULT_OPTIONS.captureKeydown ? newOptions.captureKeydown : undefined,
-        keyup: newOptions.captureKeyup !== DEFAULT_OPTIONS.captureKeyup ? newOptions.captureKeyup : undefined,
-        keypress: newOptions.captureKeypress !== DEFAULT_OPTIONS.captureKeypress ? newOptions.captureKeypress : undefined,
-        preventDefault: newOptions.preventDefault !== DEFAULT_OPTIONS.preventDefault ? newOptions.preventDefault : undefined,
-        deprecated: newOptions.showDeprecated !== DEFAULT_OPTIONS.showDeprecated ? newOptions.showDeprecated : undefined,
-        keyboard: newOptions.showKeyboard !== DEFAULT_OPTIONS.showKeyboard ? newOptions.showKeyboard : undefined,
+        keydown:
+          newOptions.captureKeydown !== DEFAULT_OPTIONS.captureKeydown
+            ? newOptions.captureKeydown
+            : undefined,
+        keyup:
+          newOptions.captureKeyup !== DEFAULT_OPTIONS.captureKeyup
+            ? newOptions.captureKeyup
+            : undefined,
+        keypress:
+          newOptions.captureKeypress !== DEFAULT_OPTIONS.captureKeypress
+            ? newOptions.captureKeypress
+            : undefined,
+        preventDefault:
+          newOptions.preventDefault !== DEFAULT_OPTIONS.preventDefault
+            ? newOptions.preventDefault
+            : undefined,
+        deprecated:
+          newOptions.showDeprecated !== DEFAULT_OPTIONS.showDeprecated
+            ? newOptions.showDeprecated
+            : undefined,
+        keyboard:
+          newOptions.showKeyboard !== DEFAULT_OPTIONS.showKeyboard
+            ? newOptions.showKeyboard
+            : undefined,
       },
       replace: true,
     });
   };
   const [currentEvent, setCurrentEvent] = useState<KeyEvent | null>(null);
-  const [lastChord, setLastChord] = useState<{ keys: Set<string>; modifiers: KeyEvent['modifiers']; mainKeys: { key: string; code: string }[] } | null>(null);
+  const [lastChord, setLastChord] = useState<{
+    keys: Set<string>;
+    modifiers: KeyEvent['modifiers'];
+    mainKeys: { key: string; code: string }[];
+  } | null>(null);
   const [eventHistory, setEventHistory] = useState<KeyEvent[]>([]);
   const [pressedKeys, setPressedKeys] = useState<Set<string>>(new Set());
   const [maxSimultaneous, setMaxSimultaneous] = useState(0);
@@ -693,15 +773,21 @@ function KeyboardPage() {
 
       // Update pressed keys
       if (type === 'keydown') {
-        const isModifier = e.code.includes('Control') || e.code.includes('Alt') || 
-                          e.code.includes('Shift') || e.code.includes('Meta');
-        
+        const isModifier =
+          e.code.includes('Control') ||
+          e.code.includes('Alt') ||
+          e.code.includes('Shift') ||
+          e.code.includes('Meta');
+
         // Check if there are any non-modifier keys currently pressed (before adding this one)
-        const hasNonModifierKeysPressed = Array.from(pressedKeys).some(code => 
-          !code.includes('Control') && !code.includes('Alt') && 
-          !code.includes('Shift') && !code.includes('Meta')
+        const hasNonModifierKeysPressed = Array.from(pressedKeys).some(
+          code =>
+            !code.includes('Control') &&
+            !code.includes('Alt') &&
+            !code.includes('Shift') &&
+            !code.includes('Meta'),
         );
-        
+
         setPressedKeys(prev => {
           const next = new Set(prev);
           next.add(e.code);
@@ -711,24 +797,25 @@ function KeyboardPage() {
           }
           return next;
         });
-        
+
         // Capture the chord (full key combination) on keydown
         // Only capture if this is a non-modifier key
         if (!isModifier) {
           setLastChord(prev => {
             const newMainKey = { key: e.key, code: e.code };
-            
+
             // Start fresh chord if:
             // 1. No previous chord
             // 2. No non-modifier keys were pressed (this is a new chord after releasing all keys)
             // 3. Modifiers changed
-            const shouldStartFresh = !prev || 
-                !hasNonModifierKeysPressed ||
-                prev.modifiers.ctrl !== modifiers.ctrl ||
-                prev.modifiers.alt !== modifiers.alt ||
-                prev.modifiers.shift !== modifiers.shift ||
-                prev.modifiers.meta !== modifiers.meta;
-            
+            const shouldStartFresh =
+              !prev ||
+              !hasNonModifierKeysPressed ||
+              prev.modifiers.ctrl !== modifiers.ctrl ||
+              prev.modifiers.alt !== modifiers.alt ||
+              prev.modifiers.shift !== modifiers.shift ||
+              prev.modifiers.meta !== modifiers.meta;
+
             if (shouldStartFresh) {
               return {
                 keys: new Set([e.code]),
@@ -736,7 +823,7 @@ function KeyboardPage() {
                 mainKeys: [newMainKey],
               };
             }
-            
+
             // Add to existing chord if key not already present
             const existingCodes = prev.mainKeys.map(k => k.code);
             if (!existingCodes.includes(e.code)) {
@@ -763,7 +850,7 @@ function KeyboardPage() {
         return newHistory.slice(0, options.historyLimit);
       });
     },
-    [options, maxSimultaneous, pressedKeys]
+    [options, maxSimultaneous, pressedKeys],
   );
 
   useEffect(() => {
@@ -821,11 +908,7 @@ function KeyboardPage() {
   // Mobile Layout
   if (isMobile) {
     return (
-      <div
-        ref={containerRef}
-        tabIndex={0}
-        className="h-full flex flex-col outline-none"
-      >
+      <div ref={containerRef} tabIndex={0} className="h-full flex flex-col outline-none">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <TabsList className="w-full grid grid-cols-3">
             <TabsTrigger value="keyboard">Keyboard</TabsTrigger>
@@ -838,7 +921,8 @@ function KeyboardPage() {
             <ModifierBadges modifiers={currentEvent?.modifiers ?? null} />
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                Current chord: <span className="font-mono font-medium text-foreground">
+                Current chord:{' '}
+                <span className="font-mono font-medium text-foreground">
                   {generateChordString(pressedKeys, currentModifiers)}
                 </span>
               </p>
@@ -848,7 +932,13 @@ function KeyboardPage() {
 
           <TabsContent value="details" className="flex-1 space-y-4 pt-4 overflow-auto">
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleCopyJSON} disabled={!currentEvent} className="flex-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyJSON}
+                disabled={!currentEvent}
+                className="flex-1"
+              >
                 {copiedField === 'json' ? 'Copied!' : 'Copy as JSON'}
               </Button>
             </div>
@@ -859,7 +949,11 @@ function KeyboardPage() {
               onCopy={handleCopyField}
               copiedField={copiedField}
             />
-            <EventHistory events={eventHistory} onClear={handleClearHistory} maxSimultaneous={maxSimultaneous} />
+            <EventHistory
+              events={eventHistory}
+              onClear={handleClearHistory}
+              maxSimultaneous={maxSimultaneous}
+            />
           </TabsContent>
 
           <TabsContent value="options" className="flex-1 pt-4 overflow-auto">
@@ -883,7 +977,8 @@ function KeyboardPage() {
         <ModifierBadges modifiers={currentEvent?.modifiers ?? null} />
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
-            Current chord: <span className="font-mono font-medium text-foreground">
+            Current chord:{' '}
+            <span className="font-mono font-medium text-foreground">
               {generateChordString(pressedKeys, currentModifiers)}
             </span>
           </p>
@@ -894,14 +989,24 @@ function KeyboardPage() {
             <div className="flex-1" /> {/* Spacer to push event history to bottom */}
           </>
         )}
-        <EventHistory events={eventHistory} onClear={handleClearHistory} maxSimultaneous={maxSimultaneous} />
+        <EventHistory
+          events={eventHistory}
+          onClear={handleClearHistory}
+          maxSimultaneous={maxSimultaneous}
+        />
       </div>
 
       {/* Right Column - Options & Details */}
       <div className="w-[320px] shrink-0 flex flex-col gap-4">
         <OptionsPanel options={options} onChange={handleOptionsChange} />
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleCopyJSON} disabled={!currentEvent} className="flex-1">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyJSON}
+            disabled={!currentEvent}
+            className="flex-1"
+          >
             {copiedField === 'json' ? 'Copied!' : 'Copy as JSON'}
           </Button>
         </div>

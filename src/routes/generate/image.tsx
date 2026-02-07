@@ -482,7 +482,12 @@ interface DirectionGridProps {
   selectedAngle: number;
 }
 
-function DirectionGrid({ customAngle, isCustom, onAngleChange, selectedAngle }: DirectionGridProps) {
+function DirectionGrid({
+  customAngle,
+  isCustom,
+  onAngleChange,
+  selectedAngle,
+}: DirectionGridProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="grid grid-cols-3 gap-1 w-fit">
@@ -1053,25 +1058,35 @@ function ImagePage() {
   // Parse colors from URL or use random
   const parseColorsFromUrl = (colorsStr: string | undefined, defaults: string[]): ColorStop[] => {
     if (colorsStr) {
-      return colorsStr.split(',').map(c => ({ color: c.startsWith('#') ? c : `#${c}`, id: generateRandomId() }));
+      return colorsStr
+        .split(',')
+        .map(c => ({ color: c.startsWith('#') ? c : `#${c}`, id: generateRandomId() }));
     }
     return defaults.map(c => ({ color: c, id: generateRandomId() }));
   };
 
   // Initialize from search params
   const initialSizePreset = search.size ?? 'og';
-  const initialPreset = SIZE_PRESETS.flatMap(g => g.presets).find(p => p.value === initialSizePreset);
+  const initialPreset = SIZE_PRESETS.flatMap(g => g.presets).find(
+    p => p.value === initialSizePreset,
+  );
   const initialWidth = search.w ?? initialPreset?.width ?? 1200;
   const initialHeight = search.h ?? initialPreset?.height ?? 630;
   const initialFillType = search.fill ?? 'gradient';
-  const initialSolidColor = search.s_color ? `#${search.s_color.replace('#', '')}` : initialColors.color1;
+  const initialSolidColor = search.s_color
+    ? `#${search.s_color.replace('#', '')}`
+    : initialColors.color1;
   const initialGradientAngle = search.g_angle ?? 90;
   const initialPatternType = search.p_type ?? 'stripes';
   const initialPatternSize = search.p_size ?? 20;
   const initialPatternAngle = search.p_angle ?? 45;
-  const initialPatternColor = search.p_color ? `#${search.p_color.replace('#', '')}` : initialColors.color3;
+  const initialPatternColor = search.p_color
+    ? `#${search.p_color.replace('#', '')}`
+    : initialColors.color3;
   const initialBgType = search.bg_type ?? 'solid';
-  const initialBgColor = search.bg_color ? `#${search.bg_color.replace('#', '')}` : initialColors.color1;
+  const initialBgColor = search.bg_color
+    ? `#${search.bg_color.replace('#', '')}`
+    : initialColors.color1;
   const initialBgAngle = search.bg_angle ?? 90;
   const initialFormat = search.format ?? 'png';
 
@@ -1346,7 +1361,8 @@ function ImagePage() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const mimeType = format === 'png' ? 'image/png' : format === 'jpeg' ? 'image/jpeg' : 'image/webp';
+    const mimeType =
+      format === 'png' ? 'image/png' : format === 'jpeg' ? 'image/jpeg' : 'image/webp';
     const extension = format;
 
     canvas.toBlob(blob => {
@@ -1382,7 +1398,8 @@ function ImagePage() {
     } catch (err) {
       console.error('Failed to copy:', err);
       toast.error('Failed to copy image', {
-        description: 'This feature may not be supported in your browser. Please use the Download button instead.',
+        description:
+          'This feature may not be supported in your browser. Please use the Download button instead.',
       });
     }
   };
@@ -1401,7 +1418,11 @@ function ImagePage() {
             Preview
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="input" forceMount className="flex-1 pt-4 overflow-y-auto pb-4 data-[state=inactive]:hidden">
+        <TabsContent
+          value="input"
+          forceMount
+          className="flex-1 pt-4 overflow-y-auto pb-4 data-[state=inactive]:hidden"
+        >
           <InputControls
             bgAngle={bgAngle}
             bgColor={bgColor}
@@ -1444,7 +1465,11 @@ function ImagePage() {
             width={width}
           />
         </TabsContent>
-        <TabsContent value="preview" forceMount className="flex-1 pt-4 min-h-0 overflow-auto data-[state=inactive]:hidden">
+        <TabsContent
+          value="preview"
+          forceMount
+          className="flex-1 pt-4 min-h-0 overflow-auto data-[state=inactive]:hidden"
+        >
           <OutputSection
             canvasRef={canvasRef}
             copied={copied}

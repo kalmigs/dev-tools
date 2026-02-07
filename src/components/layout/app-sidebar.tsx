@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import { Link, useRouterState } from '@tanstack/react-router';
-import { ArrowLeftRight, ChevronDown, FileJson, Home, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import {
+  ArrowLeftRight,
+  ChevronDown,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  FileJson,
+  Home,
+  Search,
+  ShieldCheck,
+  Sparkles,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
@@ -25,11 +36,23 @@ export function AppSidebar() {
   const currentPath = routerState.location.pathname;
   const { setOpenMobile } = useSidebar();
 
-  const [convertOpen, setConvertOpen] = useState(currentPath.startsWith('/convert'));
-  const [generateOpen, setGenerateOpen] = useState(currentPath.startsWith('/generate'));
-  const [inspectOpen, setInspectOpen] = useState(currentPath.startsWith('/inspect'));
-  const [stringsOpen, setStringsOpen] = useState(currentPath.startsWith('/strings'));
-  const [validateOpen, setValidateOpen] = useState(currentPath.startsWith('/validate'));
+  // Default all to open
+  const [convertOpen, setConvertOpen] = useState(true);
+  const [generateOpen, setGenerateOpen] = useState(true);
+  const [inspectOpen, setInspectOpen] = useState(true);
+  const [stringsOpen, setStringsOpen] = useState(true);
+  const [validateOpen, setValidateOpen] = useState(true);
+
+  const allOpen = convertOpen && generateOpen && inspectOpen && stringsOpen && validateOpen;
+
+  const toggleAll = () => {
+    const newState = !allOpen;
+    setConvertOpen(newState);
+    setGenerateOpen(newState);
+    setInspectOpen(newState);
+    setStringsOpen(newState);
+    setValidateOpen(newState);
+  };
 
   const handleLinkClick = () => {
     setOpenMobile(false);
@@ -63,7 +86,22 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Tools</SidebarGroupLabel>
+          <div className="flex items-center justify-between px-2">
+            <SidebarGroupLabel className="px-0">Tools</SidebarGroupLabel>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={toggleAll}
+              title={allOpen ? 'Collapse all' : 'Expand all'}
+            >
+              {allOpen ? (
+                <ChevronsDownUp className="h-4 w-4" />
+              ) : (
+                <ChevronsUpDown className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
               <Collapsible open={generateOpen} onOpenChange={setGenerateOpen}>

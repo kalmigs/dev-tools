@@ -39,14 +39,14 @@ function sortCategoriesByRelevance(
   isSearching: boolean,
 ): string[] {
   const categoryOrder = ['Navigation', 'Generate', 'Strings', 'Validate', 'Inspect'];
-  
+
   if (!isSearching) {
     // When not searching, use fixed category order
     return Object.keys(groupedResults).sort(
       (a, b) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b),
     );
   }
-  
+
   // When searching, sort by best relevance score in each category
   return Object.keys(groupedResults).sort((a, b) => {
     const bestScoreA = groupedResults[a][0]?.score ?? Infinity;
