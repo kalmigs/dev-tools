@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   CheckIcon,
   CopyIcon,
   Keyboard,
+  Smartphone,
   TrashIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -12,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsLikelyPhone, useIsMobile } from '@/hooks/use-mobile';
 import { cn, formatTime } from '@/lib/utils';
 
 // Search params type
@@ -233,35 +234,91 @@ function generateCodeSnippetFromChord(
 function KeyDisplay({
   currentKey,
   pressedKeys,
+  useInputCapture = false,
+  keyCaptureInputRef,
+  onMobileInput,
 }: {
   currentKey: KeyEvent | null;
   pressedKeys: Set<string>;
+  useInputCapture?: boolean;
+  keyCaptureInputRef?: (el: HTMLInputElement | null) => void;
+  onMobileInput?: (data: string) => void;
 }) {
+  const lastValueRef = useRef('');
+  const handleInput = useCallback(
+    (e: FormEvent<HTMLInputElement>) => {
+      const input = e.currentTarget;
+      const native = e.nativeEvent as InputEvent;
+      // InputEvent.data is the inserted text; some Android/IME don't set it, so fallback to value diff
+      let data = native.data;
+      if (data == null || data === '') {
+        const prev = lastValueRef.current;
+        const next = input.value;
+        if (next.length > prev.length) {
+          data = next.slice(prev.length) || next.slice(-1);
+        }
+      }
+      lastValueRef.current = input.value;
+      if (data == null || data === '') {
+        return;
+      }
+      onMobileInput?.(data);
+      // Defer clear so we don't clear in same tick as input event (some mobile browsers drop or batch events)
+      const inp = input;
+      if (typeof requestAnimationFrame !== 'undefined') {
+        requestAnimationFrame(() => { inp.value = ''; lastValueRef.current = ''; });
+      } else {
+        setTimeout(() => { inp.value = ''; lastValueRef.current = ''; }, 0);
+      }
+    },
+    [onMobileInput],
+  );
+
   return (
-    <div className="flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed border-border bg-gradient-to-b from-muted/30 to-muted/10 min-h-[180px]">
-      {currentKey ? (
-        <>
-          <div className="text-6xl font-mono font-bold mb-4 bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent animate-in zoom-in-50 duration-150">
-            {currentKey.key === ' '
-              ? '␣'
-              : currentKey.key.length === 1
-                ? currentKey.key.toUpperCase()
-                : currentKey.key}
-          </div>
-          <div className="text-sm text-muted-foreground font-mono">{currentKey.code}</div>
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-              {pressedKeys.size} key{pressedKeys.size !== 1 ? 's' : ''} pressed
-            </span>
-          </div>
-        </>
-      ) : (
-        <>
-          <Keyboard className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground text-lg">Press any key...</p>
-          <p className="text-muted-foreground/60 text-sm mt-1">Click here first to focus</p>
-        </>
+    <div className="relative flex flex-col items-center justify-center p-8 rounded-xl border-2 border-dashed border-border bg-gradient-to-b from-muted/30 to-muted/10 min-h-[180px]">
+      {useInputCapture && (
+        <input
+          ref={keyCaptureInputRef}
+          type="text"
+          placeholder="Tap to open keyboard"
+          autoComplete="off"
+          inputMode="text"
+          className="absolute inset-0 z-10 w-full h-full rounded-xl opacity-0 cursor-text min-w-0"
+          aria-label="Key capture input"
+          onInput={handleInput}
+        />
       )}
+      <div className={cn('flex flex-col items-center justify-center', useInputCapture && 'pointer-events-none')}>
+        {currentKey ? (
+          <>
+            <div className="text-6xl font-mono font-bold mb-4 bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent animate-in zoom-in-50 duration-150">
+              {currentKey.key === ' '
+                ? '␣'
+                : currentKey.key.length === 1
+                  ? currentKey.key.toUpperCase()
+                  : currentKey.key}
+            </div>
+            <div className="text-sm text-muted-foreground font-mono">
+              {currentKey.code === 'FromInputEvent' ? 'Mobile input' : currentKey.code}
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                {pressedKeys.size} key{pressedKeys.size !== 1 ? 's' : ''} pressed
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <Keyboard className="h-12 w-12 text-muted-foreground/50 mb-4" />
+            <p className="text-muted-foreground text-lg">
+              {useInputCapture ? 'Tap to open keyboard' : 'Press any key...'}
+            </p>
+            <p className="text-muted-foreground/60 text-sm mt-1">
+              {useInputCapture ? 'Then type to capture keys' : 'Click here first to focus'}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -559,10 +616,12 @@ function OptionsPanel({
   options,
   onChange,
   defaultOpen = true,
+  isMobile = false,
 }: {
   options: Options;
   onChange: (options: Options) => void;
   defaultOpen?: boolean;
+  isMobile?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -574,11 +633,24 @@ function OptionsPanel({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="p-4 space-y-3">
-          <label className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Show visual keyboard</span>
+          <label
+            className={cn(
+              'flex items-center justify-between',
+              isMobile && 'opacity-70 cursor-not-allowed',
+            )}
+          >
+            <span className="text-sm text-muted-foreground">
+              Show visual keyboard
+              {isMobile && (
+                <span className="block text-xs text-muted-foreground/80 mt-0.5">
+                  Not available on mobile
+                </span>
+              )}
+            </span>
             <Switch
               checked={options.showKeyboard}
               onCheckedChange={v => onChange({ ...options, showKeyboard: v })}
+              disabled={isMobile}
             />
           </label>
           <label className="flex items-center justify-between">
@@ -665,22 +737,35 @@ function CodeSnippet({
 }
 
 // Main component
+const MOBILE_BREAKPOINT = 768;
+
 function KeyboardPage() {
   const isMobile = useIsMobile();
+  const isLikelyPhone = useIsLikelyPhone();
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const setKeyCaptureInputRef = useCallback((el: HTMLInputElement | null) => {
+    inputRef.current = el;
+  }, []);
   const navigate = useNavigate({ from: '/inspect/keyboard' });
   const search = Route.useSearch();
 
-  // Initialize options from search params
-  const [options, setOptions] = useState<Options>(() => ({
-    captureKeydown: search.keydown ?? DEFAULT_OPTIONS.captureKeydown,
-    captureKeyup: search.keyup ?? DEFAULT_OPTIONS.captureKeyup,
-    captureKeypress: search.keypress ?? DEFAULT_OPTIONS.captureKeypress,
-    preventDefault: search.preventDefault ?? DEFAULT_OPTIONS.preventDefault,
-    showDeprecated: search.deprecated ?? DEFAULT_OPTIONS.showDeprecated,
-    showKeyboard: search.keyboard ?? DEFAULT_OPTIONS.showKeyboard,
-    historyLimit: DEFAULT_OPTIONS.historyLimit,
-  }));
+  // Initialize options from search params (default showKeyboard off on mobile)
+  const [options, setOptions] = useState<Options>(() => {
+    const showKeyboardDefault =
+      typeof window !== 'undefined' && window.innerWidth < MOBILE_BREAKPOINT
+        ? false
+        : DEFAULT_OPTIONS.showKeyboard;
+    return {
+      captureKeydown: search.keydown ?? DEFAULT_OPTIONS.captureKeydown,
+      captureKeyup: search.keyup ?? DEFAULT_OPTIONS.captureKeyup,
+      captureKeypress: search.keypress ?? DEFAULT_OPTIONS.captureKeypress,
+      preventDefault: search.preventDefault ?? DEFAULT_OPTIONS.preventDefault,
+      showDeprecated: search.deprecated ?? DEFAULT_OPTIONS.showDeprecated,
+      showKeyboard: search.keyboard ?? showKeyboardDefault,
+      historyLimit: DEFAULT_OPTIONS.historyLimit,
+    };
+  });
 
   // Update URL when options change
   const handleOptionsChange = (newOptions: Options) => {
@@ -736,6 +821,11 @@ function KeyboardPage() {
 
   const handleKeyEvent = useCallback(
     (e: KeyboardEvent, type: 'keydown' | 'keyup' | 'keypress') => {
+      // On mobile, keep the capture input empty so we only show the key in KeyDisplay
+      if (isMobile && inputRef.current && e.target === inputRef.current) {
+        e.preventDefault();
+      }
+
       // Check if we should capture this event type
       if (type === 'keydown' && !options.captureKeydown) return;
       if (type === 'keyup' && !options.captureKeyup) return;
@@ -850,12 +940,55 @@ function KeyboardPage() {
         return newHistory.slice(0, options.historyLimit);
       });
     },
-    [options, maxSimultaneous, pressedKeys],
+    [options, maxSimultaneous, pressedKeys, isMobile],
+  );
+
+  // Android (and some mobile browsers) often don't fire keydown/keyup for the virtual
+  // keyboard; they use input events instead. Handled via onMobileInput on the input (no effect).
+  const handleMobileInput = useCallback(
+    (data: string) => {
+      const modifiers = {
+        alt: false,
+        ctrl: false,
+        meta: false,
+        shift: false,
+      };
+      setCurrentModifiers(modifiers);
+
+      const chars = [...data];
+      const lastChar = chars[chars.length - 1] ?? data;
+      const keyEvent: KeyEvent = {
+        id: crypto.randomUUID(),
+        type: 'keydown',
+        key: lastChar,
+        code: 'FromInputEvent',
+        keyCode: lastChar.charCodeAt(0),
+        which: lastChar.charCodeAt(0),
+        charCode: lastChar.charCodeAt(0),
+        location: 0,
+        repeat: false,
+        isComposing: false,
+        modifiers,
+        timestamp: new Date(),
+      };
+      setCurrentEvent(keyEvent);
+      setPressedKeys(new Set());
+      setLastChord({
+        keys: new Set(['FromInputEvent']),
+        modifiers,
+        mainKeys: [{ key: lastChar, code: 'FromInputEvent' }],
+      });
+      setEventHistory(prev => {
+        const newHistory = [keyEvent, ...prev];
+        return newHistory.slice(0, options.historyLimit);
+      });
+    },
+    [options.historyLimit],
   );
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    const target = isMobile ? inputRef.current : containerRef.current;
+    if (!target) return;
 
     const handleKeyDown = (e: KeyboardEvent) => handleKeyEvent(e, 'keydown');
     const handleKeyUp = (e: KeyboardEvent) => handleKeyEvent(e, 'keyup');
@@ -867,18 +1000,18 @@ function KeyboardPage() {
       setCurrentModifiers({ alt: false, ctrl: false, meta: false, shift: false });
     };
 
-    container.addEventListener('keydown', handleKeyDown);
-    container.addEventListener('keyup', handleKeyUp);
-    container.addEventListener('keypress', handleKeyPress);
+    target.addEventListener('keydown', handleKeyDown);
+    target.addEventListener('keyup', handleKeyUp);
+    target.addEventListener('keypress', handleKeyPress);
     window.addEventListener('blur', handleBlur);
 
     return () => {
-      container.removeEventListener('keydown', handleKeyDown);
-      container.removeEventListener('keyup', handleKeyUp);
-      container.removeEventListener('keypress', handleKeyPress);
+      target.removeEventListener('keydown', handleKeyDown);
+      target.removeEventListener('keyup', handleKeyUp);
+      target.removeEventListener('keypress', handleKeyPress);
       window.removeEventListener('blur', handleBlur);
     };
-  }, [handleKeyEvent]);
+  }, [handleKeyEvent, isMobile]);
 
   const handleCopyField = async (value: string, field: string) => {
     await navigator.clipboard.writeText(value.replace(/^"|"$/g, ''));
@@ -909,6 +1042,15 @@ function KeyboardPage() {
   if (isMobile) {
     return (
       <div ref={containerRef} tabIndex={0} className="h-full flex flex-col outline-none">
+        {isLikelyPhone && (
+          <div className="shrink-0 flex items-center gap-2 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 px-3 py-2 text-sm text-amber-800 dark:text-amber-200 mb-4">
+            <Smartphone className="size-4 shrink-0" />
+            <span>
+              Key capture does not work in phone browsers yet. Use a desktop or tablet for full
+              functionality.
+            </span>
+          </div>
+        )}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
           <TabsList className="w-full grid grid-cols-3">
             <TabsTrigger value="keyboard">Keyboard</TabsTrigger>
@@ -916,8 +1058,14 @@ function KeyboardPage() {
             <TabsTrigger value="options">Options</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="keyboard" className="flex-1 space-y-4 pt-4 overflow-auto">
-            <KeyDisplay currentKey={currentEvent} pressedKeys={pressedKeys} />
+          <TabsContent value="keyboard" forceMount className="flex-1 space-y-4 pt-4 overflow-auto data-[hidden]:hidden">
+            <KeyDisplay
+              currentKey={currentEvent}
+              pressedKeys={pressedKeys}
+              useInputCapture={true}
+              keyCaptureInputRef={setKeyCaptureInputRef}
+              onMobileInput={handleMobileInput}
+            />
             <ModifierBadges modifiers={currentEvent?.modifiers ?? null} />
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
@@ -927,7 +1075,7 @@ function KeyboardPage() {
                 </span>
               </p>
             </div>
-            {options.showKeyboard && <VisualKeyboard pressedKeys={pressedKeys} />}
+            {options.showKeyboard && !isMobile && <VisualKeyboard pressedKeys={pressedKeys} />}
           </TabsContent>
 
           <TabsContent value="details" className="flex-1 space-y-4 pt-4 overflow-auto">
@@ -957,7 +1105,7 @@ function KeyboardPage() {
           </TabsContent>
 
           <TabsContent value="options" className="flex-1 pt-4 overflow-auto">
-            <OptionsPanel options={options} onChange={handleOptionsChange} />
+            <OptionsPanel options={options} onChange={handleOptionsChange} isMobile={true} />
           </TabsContent>
         </Tabs>
       </div>
@@ -983,7 +1131,7 @@ function KeyboardPage() {
             </span>
           </p>
         </div>
-        {options.showKeyboard && (
+        {options.showKeyboard && !isMobile && (
           <>
             <VisualKeyboard pressedKeys={pressedKeys} />
             <div className="flex-1" /> {/* Spacer to push event history to bottom */}
@@ -998,7 +1146,7 @@ function KeyboardPage() {
 
       {/* Right Column - Options & Details */}
       <div className="w-[320px] shrink-0 flex flex-col gap-4">
-        <OptionsPanel options={options} onChange={handleOptionsChange} />
+        <OptionsPanel options={options} onChange={handleOptionsChange} isMobile={false} />
         <div className="flex gap-2">
           <Button
             variant="outline"
