@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { GlobalSearch } from '@/components/global-search';
 
 // Types
@@ -12,16 +12,21 @@ interface TopNavProps {
 
 // Main component
 export function TopNav({ onToggleTheme, theme }: TopNavProps) {
+  const { state, isMobile, openMobile } = useSidebar();
+  const sidebarVisible = isMobile ? openMobile : state === 'expanded';
+
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-2 border-b border-border bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60">
       <SidebarTrigger />
 
-      <Link to="/" className="flex items-center gap-2">
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xs">
-          DT
-        </div>
-        <span className="font-semibold">Dev Tools</span>
-      </Link>
+      {!sidebarVisible && (
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xs">
+            DT
+          </div>
+          <span className="font-semibold">Dev Tools</span>
+        </Link>
+      )}
 
       <nav className="ml-auto flex items-center gap-1">
         <GlobalSearch />

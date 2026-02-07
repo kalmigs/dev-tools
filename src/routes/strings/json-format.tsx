@@ -971,10 +971,8 @@ function InputSection({
           className="h-full min-h-[200px] font-mono text-sm resize-none"
         />
       </div>
-      <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2 shrink-0">
-        <span>{charCount} chars</span>
-        <span>·</span>
-        <span>{lineCount} lines</span>
+      <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2 shrink-0 flex-wrap">
+        <span className="whitespace-nowrap">{charCount} chars · {lineCount} lines</span>
         <span>·</span>
         {error ? (
           <span className="text-red-500 flex items-center gap-1">
