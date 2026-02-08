@@ -6,6 +6,7 @@ import {
   GitCompare,
   Home,
   ImageIcon,
+  Sticker,
   Keyboard,
   QrCodeIcon,
   ShieldCheck,
@@ -37,6 +38,26 @@ export const homePage: PageInfo = {
 
 // Generate pages
 export const generatePages: PageInfo[] = [
+  {
+    route: '/generate/favicon',
+    title: 'Favicon',
+    description: 'Generate favicon sizes and download as a bundle',
+    keywords: [
+      'favicon',
+      'ico',
+      'icon',
+      'png',
+      'svg',
+      'browser',
+      'website',
+      'pwa',
+      'app icon',
+    ],
+    tags: ['generator', 'icon', 'favicon', 'assets'],
+    category: 'Generate',
+    icon: Sticker,
+    color: 'from-rose-500 to-red-600',
+  },
   {
     route: '/generate/faker',
     title: 'Faker',

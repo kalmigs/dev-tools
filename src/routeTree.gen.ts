@@ -18,6 +18,7 @@ import { Route as GenerateQrCodeRouteImport } from './routes/generate/qr-code'
 import { Route as GenerateJsonRouteImport } from './routes/generate/json'
 import { Route as GenerateImageRouteImport } from './routes/generate/image'
 import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
+import { Route as GenerateFaviconRouteImport } from './routes/generate/favicon'
 import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
 import { Route as ConvertTimestampRouteImport } from './routes/convert/timestamp'
 
@@ -66,6 +67,11 @@ const GenerateIdsRoute = GenerateIdsRouteImport.update({
   path: '/generate/ids',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenerateFaviconRoute = GenerateFaviconRouteImport.update({
+  id: '/generate/favicon',
+  path: '/generate/favicon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenerateFakerRoute = GenerateFakerRouteImport.update({
   id: '/generate/faker',
   path: '/generate/faker',
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
+  '/generate/favicon': typeof GenerateFaviconRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
+  '/generate/favicon': typeof GenerateFaviconRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/convert/timestamp': typeof ConvertTimestampRoute
   '/generate/faker': typeof GenerateFakerRoute
+  '/generate/favicon': typeof GenerateFaviconRoute
   '/generate/ids': typeof GenerateIdsRoute
   '/generate/image': typeof GenerateImageRoute
   '/generate/json': typeof GenerateJsonRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/convert/timestamp'
     | '/generate/faker'
+    | '/generate/favicon'
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/convert/timestamp'
     | '/generate/faker'
+    | '/generate/favicon'
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/convert/timestamp'
     | '/generate/faker'
+    | '/generate/favicon'
     | '/generate/ids'
     | '/generate/image'
     | '/generate/json'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConvertTimestampRoute: typeof ConvertTimestampRoute
   GenerateFakerRoute: typeof GenerateFakerRoute
+  GenerateFaviconRoute: typeof GenerateFaviconRoute
   GenerateIdsRoute: typeof GenerateIdsRoute
   GenerateImageRoute: typeof GenerateImageRoute
   GenerateJsonRoute: typeof GenerateJsonRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenerateIdsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generate/favicon': {
+      id: '/generate/favicon'
+      path: '/generate/favicon'
+      fullPath: '/generate/favicon'
+      preLoaderRoute: typeof GenerateFaviconRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generate/faker': {
       id: '/generate/faker'
       path: '/generate/faker'
@@ -259,6 +279,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConvertTimestampRoute: ConvertTimestampRoute,
   GenerateFakerRoute: GenerateFakerRoute,
+  GenerateFaviconRoute: GenerateFaviconRoute,
   GenerateIdsRoute: GenerateIdsRoute,
   GenerateImageRoute: GenerateImageRoute,
   GenerateJsonRoute: GenerateJsonRoute,

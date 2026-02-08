@@ -6,6 +6,7 @@ A collection of browser-based developer utilities for generating, formatting, an
 
 ### Generate
 
+- **Favicon** - Generate favicon sizes and download as a bundle
 - **Faker** - Generate fake data (names, emails, addresses, etc.) using Faker.js
 - **IDs** - Generate unique identifiers (UUID, CUID, CUID2, NanoID)
 - **Image** - Generate placeholder images, colors, gradients, and patterns
