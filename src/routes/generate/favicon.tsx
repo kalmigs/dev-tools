@@ -516,7 +516,10 @@ async function createIcoBlob({
     }),
   );
 
-  const filteredBuffers = pngBuffers.filter(Boolean) as Array<{ buffer: ArrayBuffer; size: number }>;
+  const filteredBuffers = pngBuffers.filter(Boolean) as Array<{
+    buffer: ArrayBuffer;
+    size: number;
+  }>;
   if (!filteredBuffers.length) return null;
 
   const headerSize = 6 + filteredBuffers.length * 16;
@@ -541,7 +544,9 @@ async function createIcoBlob({
     offset += buffer.byteLength;
   });
 
-  return new Blob([header, ...filteredBuffers.map(entry => entry.buffer)], { type: 'image/x-icon' });
+  return new Blob([header, ...filteredBuffers.map(entry => entry.buffer)], {
+    type: 'image/x-icon',
+  });
 }
 
 // Subcomponents
@@ -702,14 +707,7 @@ function FaviconPage() {
     setSourceDataUrl(svgToDataUrl(svgText));
     setSourceIsSvg(true);
     setSourceSvgText(svgText);
-  }, [
-    iconColor,
-    sourceType,
-    textFamily,
-    textSpacing,
-    textValue,
-    textWeight,
-  ]);
+  }, [iconColor, sourceType, textFamily, textSpacing, textValue, textWeight]);
 
   useEffect(() => {
     if (sourceType !== 'upload') return;
@@ -836,7 +834,7 @@ function FaviconPage() {
   };
 
   const handleDownload = async () => {
-    if (!sourceDataUrl && sourceType !== 'text') {
+    if (!sourceDataUrl) {
       toast.error('Select an image source', {
         description: 'Upload a PNG/SVG or choose a Lucide icon first.',
       });
@@ -919,11 +917,11 @@ function FaviconPage() {
           }}
           className="mt-4"
         >
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="upload">Upload</TabsTrigger>
-          <TabsTrigger value="lucide">Lucide</TabsTrigger>
-          <TabsTrigger value="text">Text</TabsTrigger>
-        </TabsList>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="upload">Upload</TabsTrigger>
+            <TabsTrigger value="lucide">Lucide</TabsTrigger>
+            <TabsTrigger value="text">Text</TabsTrigger>
+          </TabsList>
           <TabsContent value="upload" className="mt-4 space-y-4">
             <input
               ref={uploadInputRef}
@@ -1027,9 +1025,7 @@ function FaviconPage() {
                 className="mt-2 text-center text-lg font-semibold tracking-wide"
                 maxLength={2}
               />
-              <p className="mt-2 text-xs text-muted-foreground">
-                Emoji and symbols are supported.
-              </p>
+              <p className="mt-2 text-xs text-muted-foreground">Emoji and symbols are supported.</p>
             </div>
             <div>
               <Label>Font Family</Label>
@@ -1091,9 +1087,7 @@ function FaviconPage() {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold text-foreground">Output</div>
-            <div className="text-xs text-muted-foreground">
-              PNG set with optional SVG and ICO
-            </div>
+            <div className="text-xs text-muted-foreground">PNG set with optional SVG and ICO</div>
           </div>
           <Palette className="size-4 text-muted-foreground" />
         </div>
@@ -1102,23 +1096,15 @@ function FaviconPage() {
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2">
             <div>
               <div className="text-sm font-medium text-foreground">Include SVG</div>
-              <div className="text-xs text-muted-foreground">
-                Only available when source is SVG
-              </div>
+              <div className="text-xs text-muted-foreground">Only available when source is SVG</div>
             </div>
-            <Switch
-              checked={includeSvg}
-              onCheckedChange={setIncludeSvg}
-              disabled={!svgAvailable}
-            />
+            <Switch checked={includeSvg} onCheckedChange={setIncludeSvg} disabled={!svgAvailable} />
           </div>
 
           <div className="flex items-center justify-between gap-3 rounded-lg border border-border/70 bg-muted/30 px-3 py-2">
             <div>
               <div className="text-sm font-medium text-foreground">Include ICO</div>
-              <div className="text-xs text-muted-foreground">
-                Generates standard ICO sizes
-              </div>
+              <div className="text-xs text-muted-foreground">Generates standard ICO sizes</div>
             </div>
             <Switch checked={includeIco} onCheckedChange={setIncludeIco} />
           </div>
@@ -1129,9 +1115,7 @@ function FaviconPage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="text-sm font-semibold text-foreground">Canvas</div>
-            <div className="text-xs text-muted-foreground">
-              Background color and safe padding
-            </div>
+            <div className="text-xs text-muted-foreground">Background color and safe padding</div>
           </div>
           <ImageIcon className="size-4 text-muted-foreground" />
         </div>
@@ -1296,9 +1280,7 @@ function FaviconPage() {
         <div className="flex items-center justify-between gap-3">
           <div>
             <div className="text-sm font-semibold text-foreground">Live Preview</div>
-            <div className="text-xs text-muted-foreground">
-              Updated with background and padding
-            </div>
+            <div className="text-xs text-muted-foreground">Updated with background and padding</div>
           </div>
           <Button onClick={handleDownload} className="gap-2">
             <DownloadIcon className="size-4" />
@@ -1316,11 +1298,7 @@ function FaviconPage() {
             </div>
             <div className="mt-4 flex items-center justify-center rounded-2xl border border-dashed border-border/70 bg-background/60 p-6">
               {previewUrls[512] ? (
-                <img
-                  src={previewUrls[512]}
-                  alt="Large preview"
-                  className="h-48 w-48 rounded-2xl"
-                />
+                <img src={previewUrls[512]} alt="Large preview" className="h-48 w-48 rounded-2xl" />
               ) : (
                 <div className="flex flex-col items-center gap-2 text-muted-foreground">
                   <UploadCloudIcon className="size-6" />
@@ -1363,25 +1341,15 @@ function FaviconPage() {
               </div>
               <div className="mt-3 flex items-center justify-center">
                 {previewUrls[180] ? (
-                  <img
-                    src={previewUrls[180]}
-                    alt="Light surface preview"
-                    className="size-20"
-                  />
+                  <img src={previewUrls[180]} alt="Light surface preview" className="size-20" />
                 ) : null}
               </div>
             </div>
-              <div className="rounded-xl border border-border/70 bg-foreground/90 p-4">
-              <div className="text-[10px] uppercase tracking-wider text-background/70">
-                Dark
-              </div>
+            <div className="rounded-xl border border-border/70 bg-foreground/90 p-4">
+              <div className="text-[10px] uppercase tracking-wider text-background/70">Dark</div>
               <div className="mt-3 flex items-center justify-center">
                 {previewUrls[180] ? (
-                  <img
-                    src={previewUrls[180]}
-                    alt="Dark surface preview"
-                    className="size-20"
-                  />
+                  <img src={previewUrls[180]} alt="Dark surface preview" className="size-20" />
                 ) : null}
               </div>
             </div>

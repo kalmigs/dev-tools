@@ -11,7 +11,7 @@ function Tabs({ className, onValueChange, ...props }: TabsProps) {
     <TabsPrimitive.Root
       data-slot="tabs"
       className={cn('flex flex-col gap-2', className)}
-      onValueChange={(value) => {
+      onValueChange={value => {
         if (value !== null && onValueChange) {
           onValueChange(value);
         }

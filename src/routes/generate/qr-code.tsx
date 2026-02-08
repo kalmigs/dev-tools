@@ -573,10 +573,7 @@ function QrCodePage() {
     return (
       <div className="flex flex-col h-full">
         <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeftIcon className="size-5" />
           </Link>
           <h1 className="text-lg font-semibold">QR Code</h1>

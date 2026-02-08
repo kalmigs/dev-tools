@@ -30,7 +30,7 @@ function Slider({
       value={value}
       min={min}
       max={max}
-      onValueChange={(val) => {
+      onValueChange={val => {
         if (onValueChange) {
           onValueChange(Array.isArray(val) ? val : [val]);
         }

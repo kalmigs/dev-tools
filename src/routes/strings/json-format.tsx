@@ -972,7 +972,9 @@ function InputSection({
         />
       </div>
       <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2 shrink-0 flex-wrap">
-        <span className="whitespace-nowrap">{charCount} chars · {lineCount} lines</span>
+        <span className="whitespace-nowrap">
+          {charCount} chars · {lineCount} lines
+        </span>
         <span>·</span>
         {error ? (
           <span className="text-red-500 flex items-center gap-1">

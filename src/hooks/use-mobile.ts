@@ -18,8 +18,7 @@ export function useIsMobile() {
   return !!isMobile;
 }
 
-const PHONE_UA =
-  /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i;
+const PHONE_UA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i;
 
 export function useIsLikelyPhone() {
   const [isLikelyPhone, setIsLikelyPhone] = React.useState(false);

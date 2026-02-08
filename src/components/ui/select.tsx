@@ -13,7 +13,7 @@ function Select({ onValueChange, ...props }: SelectProps) {
   return (
     <SelectPrimitive.Root
       data-slot="select"
-      onValueChange={(value) => {
+      onValueChange={value => {
         if (value !== null && value !== undefined && onValueChange) {
           onValueChange(value as string);
         }

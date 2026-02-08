@@ -266,9 +266,15 @@ function KeyDisplay({
       // Defer clear so we don't clear in same tick as input event (some mobile browsers drop or batch events)
       const inp = input;
       if (typeof requestAnimationFrame !== 'undefined') {
-        requestAnimationFrame(() => { inp.value = ''; lastValueRef.current = ''; });
+        requestAnimationFrame(() => {
+          inp.value = '';
+          lastValueRef.current = '';
+        });
       } else {
-        setTimeout(() => { inp.value = ''; lastValueRef.current = ''; }, 0);
+        setTimeout(() => {
+          inp.value = '';
+          lastValueRef.current = '';
+        }, 0);
       }
     },
     [onMobileInput],
@@ -288,7 +294,12 @@ function KeyDisplay({
           onInput={handleInput}
         />
       )}
-      <div className={cn('flex flex-col items-center justify-center', useInputCapture && 'pointer-events-none')}>
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center',
+          useInputCapture && 'pointer-events-none',
+        )}
+      >
         {currentKey ? (
           <>
             <div className="text-6xl font-mono font-bold mb-4 bg-gradient-to-br from-primary to-primary/60 bg-clip-text text-transparent animate-in zoom-in-50 duration-150">
@@ -1058,7 +1069,11 @@ function KeyboardPage() {
             <TabsTrigger value="options">Options</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="keyboard" forceMount className="flex-1 space-y-4 pt-4 overflow-auto data-[hidden]:hidden">
+          <TabsContent
+            value="keyboard"
+            forceMount
+            className="flex-1 space-y-4 pt-4 overflow-auto data-[hidden]:hidden"
+          >
             <KeyDisplay
               currentKey={currentEvent}
               pressedKeys={pressedKeys}
