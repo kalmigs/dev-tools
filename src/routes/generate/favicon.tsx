@@ -299,6 +299,16 @@ function clampSize(value: number) {
   return Math.max(8, Math.min(MAX_SIZE, value));
 }
 
+function randomHexColor() {
+  const value = Math.floor(Math.random() * 0xffffff);
+  return `#${value.toString(16).padStart(6, '0')}`;
+}
+
+function pickRandomIconName() {
+  const index = Math.floor(Math.random() * LUCIDE_ICON_OPTIONS.length);
+  return LUCIDE_ICON_OPTIONS[index]?.name ?? DEFAULT_ICON;
+}
+
 function formatSize(size: number) {
   return `${size}x${size}`;
 }
@@ -588,15 +598,15 @@ function FaviconPage() {
   const navigate = useNavigate({ from: '/generate/favicon' });
   const search = Route.useSearch();
 
-  const [bgColor, setBgColor] = useState(search.bg ?? DEFAULT_BG);
-  const [bgEnabled, setBgEnabled] = useState(search.bgEnabled ?? false);
+  const [bgColor, setBgColor] = useState(() => search.bg ?? randomHexColor());
+  const [bgEnabled, setBgEnabled] = useState(search.bgEnabled ?? true);
   const [includeIco, setIncludeIco] = useState(search.includeIco ?? true);
   const [includeSvg, setIncludeSvg] = useState(search.includeSvg ?? true);
   const [iconColor, setIconColor] = useState(search.color ?? DEFAULT_ICON_COLOR);
   const [padding, setPadding] = useState(search.padding ?? DEFAULT_PADDING);
   const [radius, setRadius] = useState(search.radius ?? DEFAULT_RADIUS);
   const [sizes, setSizes] = useState(() => parseSizes(search.sizes) ?? DEFAULT_SIZES);
-  const [sourceType, setSourceType] = useState<SourceType>(search.source ?? 'upload');
+  const [sourceType, setSourceType] = useState<SourceType>(search.source ?? 'lucide');
   const [textValue, setTextValue] = useState(search.text ?? DEFAULT_TEXT);
   const [textFamily, setTextFamily] = useState(search.fontFamily ?? DEFAULT_TEXT_FAMILY);
   const [textSpacing, setTextSpacing] = useState(search.letterSpacing ?? DEFAULT_TEXT_SPACING);
@@ -604,7 +614,7 @@ function FaviconPage() {
 
   const [customSize, setCustomSize] = useState<number | null>(null);
   const [iconSearch, setIconSearch] = useState('');
-  const [lucideIcon, setLucideIcon] = useState(search.icon ?? DEFAULT_ICON);
+  const [lucideIcon, setLucideIcon] = useState(() => search.icon ?? pickRandomIconName());
   const [previewUrls, setPreviewUrls] = useState<Record<number, string>>({});
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [sourceDataUrl, setSourceDataUrl] = useState<string | null>(null);
