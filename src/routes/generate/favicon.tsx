@@ -158,7 +158,6 @@ interface SearchParams {
 }
 
 // Constants
-const DEFAULT_BG = '#ffffff';
 const DEFAULT_ICON = 'Sparkles';
 const DEFAULT_ICON_COLOR = '#0f172a';
 const DEFAULT_PADDING = 12;
