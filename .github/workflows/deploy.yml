@@ -36,6 +36,9 @@ jobs:
       - name: Security audit
         run: pnpm audit --audit-level=high
 
+      - name: Run tests
+        run: pnpm test -- --run
+
       - name: Build
         run: pnpm build
 
