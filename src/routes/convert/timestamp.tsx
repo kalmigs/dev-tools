@@ -15,9 +15,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-// Types
-type TimestampFormat = 'auto' | 'seconds' | 'milliseconds';
+import { isNumericTimestamp, parseInput, shouldShowInputTimezone, type TimestampFormat } from '@/lib/utils/dateParser';
 
 interface CopiedState {
   [key: string]: boolean;
@@ -175,10 +173,6 @@ function getTimezoneOffset(timezone: string): string {
   return offsetPart?.value || '';
 }
 
-function isNumericTimestamp(value: string): boolean {
-  return /^-?\d+$/.test(value.trim());
-}
-
 function loadSavedTimezones(): string[] {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -194,136 +188,12 @@ function loadSavedTimezones(): string[] {
   return DEFAULT_OUTPUT_TIMEZONES;
 }
 
-function parseInput(
-  value: string,
-  format: TimestampFormat,
-  inputTimezone: string,
-): { date: Date | null; error: string | null } {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return { date: null, error: null };
-  }
-
-  // Check if it's a numeric timestamp
-  if (isNumericTimestamp(trimmed)) {
-    const num = parseInt(trimmed, 10);
-    let ms: number;
-
-    if (format === 'auto') {
-      // Auto-detect: if > 10 digits, assume milliseconds
-      ms = trimmed.length > 10 ? num : num * 1000;
-    } else if (format === 'seconds') {
-      ms = num * 1000;
-    } else {
-      ms = num;
-    }
-
-    const date = new Date(ms);
-    if (isNaN(date.getTime())) {
-      return { date: null, error: 'Invalid timestamp' };
-    }
-    return { date, error: null };
-  }
-
-  // Try to parse as date string
-  // First, check if it has timezone info
-  const hasTimezone = /Z|[+-]\d{2}:?\d{2}$/i.test(trimmed) || /\s(UTC|GMT)/i.test(trimmed);
-
-  if (hasTimezone) {
-    const date = new Date(trimmed);
-    if (isNaN(date.getTime())) {
-      return { date: null, error: 'Invalid date format' };
-    }
-    return { date, error: null };
-  }
-
-  // No timezone - interpret in the selected input timezone
-  // We need to find the UTC time that, when displayed in inputTimezone, shows the input value
-  try {
-    // Normalize the input to ISO-like format
-    const normalizedInput = trimmed.includes('T') ? trimmed : trimmed.replace(' ', 'T');
-
-    // Parse the date components
-    const parts = normalizedInput.match(/(\d{4})-?(\d{2})-?(\d{2})T?(\d{2})?:?(\d{2})?:?(\d{2})?/);
-    if (!parts) {
-      return { date: null, error: 'Invalid date format' };
-    }
-
-    const [, year, month, day, hour = '0', minute = '0', second = '0'] = parts;
-
-    // Create a UTC date with these components
-    const utcDate = new Date(
-      Date.UTC(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hour),
-        parseInt(minute),
-        parseInt(second),
-      ),
-    );
-
-    if (isNaN(utcDate.getTime())) {
-      return { date: null, error: 'Invalid date format' };
-    }
-
-    // Now find the offset: what does this UTC time look like in the target timezone?
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: inputTimezone,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-
-    // Format the UTC date in target timezone and parse it back
-    const partsInTz = formatter.formatToParts(utcDate);
-    const getPart = (type: string) => partsInTz.find(p => p.type === type)?.value ?? '0';
-
-    const tzYear = parseInt(getPart('year'));
-    const tzMonth = parseInt(getPart('month')) - 1;
-    const tzDay = parseInt(getPart('day'));
-    const tzHour = parseInt(getPart('hour'));
-    const tzMinute = parseInt(getPart('minute'));
-    const tzSecond = parseInt(getPart('second'));
-
-    // Create what the target timezone thinks is this time in UTC
-    const tzAsUtc = new Date(Date.UTC(tzYear, tzMonth, tzDay, tzHour, tzMinute, tzSecond));
-
-    // The difference tells us the timezone offset
-    const offsetMs = tzAsUtc.getTime() - utcDate.getTime();
-
-    // Adjust: we want the UTC time where inputTimezone shows our input values
-    const date = new Date(utcDate.getTime() - offsetMs);
-
-    if (isNaN(date.getTime())) {
-      return { date: null, error: 'Invalid date format' };
-    }
-    return { date, error: null };
-  } catch {
-    return { date: null, error: 'Invalid date format' };
-  }
-}
-
 function saveTimezones(timezones: string[]): void {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(timezones));
   } catch {
     // Ignore storage errors
   }
-}
-
-function shouldShowInputTimezone(value: string): boolean {
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  // Hide for numeric timestamps
-  if (isNumericTimestamp(trimmed)) return false;
-  // Hide if input has explicit timezone (Z, +00:00, -05:00, UTC, GMT)
-  if (/Z|[+-]\d{2}:?\d{2}$/i.test(trimmed) || /\s(UTC|GMT)/i.test(trimmed)) return false;
-  return true;
 }
 
 function searchTimezones(query: string, exclude: string[]): string[] {

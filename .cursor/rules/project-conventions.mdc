@@ -19,6 +19,7 @@ alwaysApply: true
 - `src/components/layout/` - Layout components (TopNav, Sidebar)
 - `src/hooks/` - Custom React hooks (use-*.ts)
 - `src/lib/` - Utilities and helpers (non-hook functions)
+- `tests/` - Test files; mirrors `src/` directory structure (e.g. `tests/lib/utils/dateParser.spec.ts` for `src/lib/utils/dateParser.ts`). Keeps `src` free of test files.
 
 ## Code Reuse
 
