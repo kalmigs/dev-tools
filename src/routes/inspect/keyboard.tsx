@@ -1024,6 +1024,16 @@ function KeyboardPage() {
     };
   }, [handleKeyEvent, isMobile]);
 
+  useEffect(() => {
+    const target = isMobile ? inputRef.current : containerRef.current;
+    if (!target) return;
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => target.focus());
+    } else {
+      setTimeout(() => target.focus(), 0);
+    }
+  }, [isMobile]);
+
   const handleCopyField = async (value: string, field: string) => {
     await navigator.clipboard.writeText(value.replace(/^"|"$/g, ''));
     setCopiedField(field);
