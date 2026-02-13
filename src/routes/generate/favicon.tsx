@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import JSZip from 'jszip';
 import {
   Aperture,
+  AudioLines,
   BadgeAlert,
   BatteryCharging,
   Bell,
@@ -176,6 +177,7 @@ const ICO_SIZES = [16, 32, 48, 64, 128, 256];
 
 const LUCIDE_ICON_OPTIONS: IconOption[] = [
   { Icon: Aperture, name: 'Aperture' },
+  { Icon: AudioLines, name: 'AudioLines' },
   { Icon: BadgeAlert, name: 'BadgeAlert' },
   { Icon: BatteryCharging, name: 'BatteryCharging' },
   { Icon: Bell, name: 'Bell' },
