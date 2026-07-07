@@ -703,6 +703,9 @@ function FaviconPage() {
     cloned.setAttribute('height', '512');
     const serializer = new XMLSerializer();
     const svgText = serializer.serializeToString(cloned);
+    // Derives the source from the committed lucide SVG DOM node (read via ref),
+    // so it can't be computed during render; an effect is the correct tool here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSourceDataUrl(svgToDataUrl(svgText));
     setSourceIsSvg(true);
     setSourceSvgText(svgText);
@@ -717,6 +720,9 @@ function FaviconPage() {
       text: textValue,
       weight: textWeight,
     });
+    // Writes the same source state the lucide/upload effects own, selected by
+    // sourceType; it stays an effect so all three paths share one source pipeline.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSourceDataUrl(svgToDataUrl(svgText));
     setSourceIsSvg(true);
     setSourceSvgText(svgText);
@@ -725,12 +731,18 @@ function FaviconPage() {
   useEffect(() => {
     if (sourceType !== 'upload') return;
     if (!sourceDataUrl) return;
+    // Reconciles isSvg for uploads once sourceDataUrl/sourceSvgText (set by the
+    // upload handler) land; derived from state the other source effects also write.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSourceIsSvg(Boolean(sourceSvgText));
   }, [sourceDataUrl, sourceSvgText, sourceType]);
 
   useEffect(() => {
     const source = sourceDataUrl;
     if (!source) {
+      // Async effect (PNG rasterization below); clears previews when the source
+      // is removed. The work is inherently async, so it can't leave the effect.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPreviewUrls({});
       return;
     }
