@@ -705,7 +705,6 @@ function FaviconPage() {
     const svgText = serializer.serializeToString(cloned);
     // Derives the source from the committed lucide SVG DOM node (read via ref),
     // so it can't be computed during render; an effect is the correct tool here.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSourceDataUrl(svgToDataUrl(svgText));
     setSourceIsSvg(true);
     setSourceSvgText(svgText);

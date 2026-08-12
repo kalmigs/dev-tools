@@ -49,14 +49,7 @@ type BackgroundType = 'solid' | 'gradient';
 type FillType = 'solid' | 'gradient' | 'pattern';
 type ImageFormat = 'png' | 'jpeg' | 'webp';
 type PatternType =
-  | 'checkerboard'
-  | 'dots'
-  | 'grid'
-  | 'noise'
-  | 'stripes'
-  | 'triangles'
-  | 'waves'
-  | 'zigzag';
+  'checkerboard' | 'dots' | 'grid' | 'noise' | 'stripes' | 'triangles' | 'waves' | 'zigzag';
 
 interface ColorStop {
   color: string;

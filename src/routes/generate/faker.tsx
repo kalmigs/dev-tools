@@ -26,14 +26,7 @@ import { cn } from '@/lib/utils';
 
 // Types
 type Category =
-  | 'person'
-  | 'internet'
-  | 'location'
-  | 'commerce'
-  | 'finance'
-  | 'date'
-  | 'lorem'
-  | 'phone';
+  'person' | 'internet' | 'location' | 'commerce' | 'finance' | 'date' | 'lorem' | 'phone';
 
 interface CategoryConfig {
   icon: string;

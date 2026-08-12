@@ -2,30 +2,31 @@ import * as React from 'react';
 
 const MOBILE_BREAKPOINT = 768;
 
+function subscribeToViewport(onChange: () => void) {
+  const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+  mql.addEventListener('change', onChange);
+  return () => mql.removeEventListener('change', onChange);
+}
+
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
-
-  React.useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    };
-    mql.addEventListener('change', onChange);
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    return () => mql.removeEventListener('change', onChange);
-  }, []);
-
-  return !!isMobile;
+  return React.useSyncExternalStore(
+    subscribeToViewport,
+    () => window.innerWidth < MOBILE_BREAKPOINT,
+    () => false,
+  );
 }
 
 const PHONE_UA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i;
 
+// The user agent never changes, so there is nothing to subscribe to.
+function subscribeToNothing() {
+  return () => {};
+}
+
 export function useIsLikelyPhone() {
-  const [isLikelyPhone, setIsLikelyPhone] = React.useState(false);
-
-  React.useEffect(() => {
-    setIsLikelyPhone(PHONE_UA.test(navigator.userAgent));
-  }, []);
-
-  return isLikelyPhone;
+  return React.useSyncExternalStore(
+    subscribeToNothing,
+    () => PHONE_UA.test(navigator.userAgent),
+    () => false,
+  );
 }

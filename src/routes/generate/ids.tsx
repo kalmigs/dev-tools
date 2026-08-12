@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-// @ts-expect-error - @bugsnag/cuid has type export issues
 import cuid from '@bugsnag/cuid';
 import { nanoid } from 'nanoid';
 import { createId as cuid2 } from '@paralleldrive/cuid2';

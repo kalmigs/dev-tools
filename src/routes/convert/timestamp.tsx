@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { CheckIcon, ChevronDownIcon, CopyIcon, PlusIcon, XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { isNumericTimestamp, parseInput, shouldShowInputTimezone, type TimestampFormat } from '@/lib/utils/dateParser';
+import {
+  isNumericTimestamp,
+  parseInput,
+  shouldShowInputTimezone,
+  type TimestampFormat,
+} from '@/lib/utils/dateParser';
 
 interface CopiedState {
   [key: string]: boolean;
@@ -556,8 +561,6 @@ function TimestampPage() {
   const [inputTimezone, setInputTimezone] = useState(search.inputTz ?? localTz);
   const [inputValue, setInputValue] = useState(search.value ?? '');
   const [outputTimezones, setOutputTimezones] = useState<string[]>(loadSavedTimezones);
-  const [parsedDate, setParsedDate] = useState<Date | null>(null);
-  const [parseError, setParseError] = useState<string | null>(null);
   const [timestampFormat, setTimestampFormat] = useState<TimestampFormat>(search.format ?? 'auto');
 
   // Update URL when settings change
@@ -571,12 +574,11 @@ function TimestampPage() {
     });
   };
 
-  // Parse input whenever it changes
-  useEffect(() => {
-    const { date, error } = parseInput(inputValue, timestampFormat, inputTimezone);
-    setParsedDate(date);
-    setParseError(error);
-  }, [inputValue, timestampFormat, inputTimezone]);
+  // Derived from the input, so it is computed during render rather than in an effect
+  const { date: parsedDate, error: parseError } = useMemo(
+    () => parseInput(inputValue, timestampFormat, inputTimezone),
+    [inputValue, timestampFormat, inputTimezone],
+  );
 
   const handleAddTimezone = (tz: string) => {
     const updated = [...outputTimezones, tz];

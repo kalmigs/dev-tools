@@ -10,66 +10,26 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
-import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
-import { Route as StringsCompareRouteImport } from './routes/strings/compare'
-import { Route as InspectKeyboardRouteImport } from './routes/inspect/keyboard'
-import { Route as GenerateQrCodeRouteImport } from './routes/generate/qr-code'
-import { Route as GenerateJsonRouteImport } from './routes/generate/json'
-import { Route as GenerateImageRouteImport } from './routes/generate/image'
-import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
-import { Route as GenerateFaviconRouteImport } from './routes/generate/favicon'
-import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
 import { Route as ConvertTimestampRouteImport } from './routes/convert/timestamp'
+import { Route as GenerateFakerRouteImport } from './routes/generate/faker'
+import { Route as GenerateFaviconRouteImport } from './routes/generate/favicon'
+import { Route as GenerateIdsRouteImport } from './routes/generate/ids'
+import { Route as GenerateImageRouteImport } from './routes/generate/image'
+import { Route as GenerateJsonRouteImport } from './routes/generate/json'
+import { Route as GenerateQrCodeRouteImport } from './routes/generate/qr-code'
+import { Route as InspectKeyboardRouteImport } from './routes/inspect/keyboard'
+import { Route as StringsCompareRouteImport } from './routes/strings/compare'
+import { Route as StringsJsonFormatRouteImport } from './routes/strings/json-format'
+import { Route as ValidateIdsRouteImport } from './routes/validate/ids'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ValidateIdsRoute = ValidateIdsRouteImport.update({
-  id: '/validate/ids',
-  path: '/validate/ids',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StringsJsonFormatRoute = StringsJsonFormatRouteImport.update({
-  id: '/strings/json-format',
-  path: '/strings/json-format',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StringsCompareRoute = StringsCompareRouteImport.update({
-  id: '/strings/compare',
-  path: '/strings/compare',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InspectKeyboardRoute = InspectKeyboardRouteImport.update({
-  id: '/inspect/keyboard',
-  path: '/inspect/keyboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateQrCodeRoute = GenerateQrCodeRouteImport.update({
-  id: '/generate/qr-code',
-  path: '/generate/qr-code',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateJsonRoute = GenerateJsonRouteImport.update({
-  id: '/generate/json',
-  path: '/generate/json',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateImageRoute = GenerateImageRouteImport.update({
-  id: '/generate/image',
-  path: '/generate/image',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateIdsRoute = GenerateIdsRouteImport.update({
-  id: '/generate/ids',
-  path: '/generate/ids',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GenerateFaviconRoute = GenerateFaviconRouteImport.update({
-  id: '/generate/favicon',
-  path: '/generate/favicon',
+const ConvertTimestampRoute = ConvertTimestampRouteImport.update({
+  id: '/convert/timestamp',
+  path: '/convert/timestamp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenerateFakerRoute = GenerateFakerRouteImport.update({
@@ -77,9 +37,49 @@ const GenerateFakerRoute = GenerateFakerRouteImport.update({
   path: '/generate/faker',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ConvertTimestampRoute = ConvertTimestampRouteImport.update({
-  id: '/convert/timestamp',
-  path: '/convert/timestamp',
+const GenerateFaviconRoute = GenerateFaviconRouteImport.update({
+  id: '/generate/favicon',
+  path: '/generate/favicon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateIdsRoute = GenerateIdsRouteImport.update({
+  id: '/generate/ids',
+  path: '/generate/ids',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateImageRoute = GenerateImageRouteImport.update({
+  id: '/generate/image',
+  path: '/generate/image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateJsonRoute = GenerateJsonRouteImport.update({
+  id: '/generate/json',
+  path: '/generate/json',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateQrCodeRoute = GenerateQrCodeRouteImport.update({
+  id: '/generate/qr-code',
+  path: '/generate/qr-code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InspectKeyboardRoute = InspectKeyboardRouteImport.update({
+  id: '/inspect/keyboard',
+  path: '/inspect/keyboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StringsCompareRoute = StringsCompareRouteImport.update({
+  id: '/strings/compare',
+  path: '/strings/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StringsJsonFormatRoute = StringsJsonFormatRouteImport.update({
+  id: '/strings/json-format',
+  path: '/strings/json-format',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidateIdsRoute = ValidateIdsRouteImport.update({
+  id: '/validate/ids',
+  path: '/validate/ids',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -195,67 +195,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/validate/ids': {
-      id: '/validate/ids'
-      path: '/validate/ids'
-      fullPath: '/validate/ids'
-      preLoaderRoute: typeof ValidateIdsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/strings/json-format': {
-      id: '/strings/json-format'
-      path: '/strings/json-format'
-      fullPath: '/strings/json-format'
-      preLoaderRoute: typeof StringsJsonFormatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/strings/compare': {
-      id: '/strings/compare'
-      path: '/strings/compare'
-      fullPath: '/strings/compare'
-      preLoaderRoute: typeof StringsCompareRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/inspect/keyboard': {
-      id: '/inspect/keyboard'
-      path: '/inspect/keyboard'
-      fullPath: '/inspect/keyboard'
-      preLoaderRoute: typeof InspectKeyboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate/qr-code': {
-      id: '/generate/qr-code'
-      path: '/generate/qr-code'
-      fullPath: '/generate/qr-code'
-      preLoaderRoute: typeof GenerateQrCodeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate/json': {
-      id: '/generate/json'
-      path: '/generate/json'
-      fullPath: '/generate/json'
-      preLoaderRoute: typeof GenerateJsonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate/image': {
-      id: '/generate/image'
-      path: '/generate/image'
-      fullPath: '/generate/image'
-      preLoaderRoute: typeof GenerateImageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate/ids': {
-      id: '/generate/ids'
-      path: '/generate/ids'
-      fullPath: '/generate/ids'
-      preLoaderRoute: typeof GenerateIdsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/generate/favicon': {
-      id: '/generate/favicon'
-      path: '/generate/favicon'
-      fullPath: '/generate/favicon'
-      preLoaderRoute: typeof GenerateFaviconRouteImport
+    '/convert/timestamp': {
+      id: '/convert/timestamp'
+      path: '/convert/timestamp'
+      fullPath: '/convert/timestamp'
+      preLoaderRoute: typeof ConvertTimestampRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/generate/faker': {
@@ -265,11 +209,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenerateFakerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/convert/timestamp': {
-      id: '/convert/timestamp'
-      path: '/convert/timestamp'
-      fullPath: '/convert/timestamp'
-      preLoaderRoute: typeof ConvertTimestampRouteImport
+    '/generate/favicon': {
+      id: '/generate/favicon'
+      path: '/generate/favicon'
+      fullPath: '/generate/favicon'
+      preLoaderRoute: typeof GenerateFaviconRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/ids': {
+      id: '/generate/ids'
+      path: '/generate/ids'
+      fullPath: '/generate/ids'
+      preLoaderRoute: typeof GenerateIdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/image': {
+      id: '/generate/image'
+      path: '/generate/image'
+      fullPath: '/generate/image'
+      preLoaderRoute: typeof GenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/json': {
+      id: '/generate/json'
+      path: '/generate/json'
+      fullPath: '/generate/json'
+      preLoaderRoute: typeof GenerateJsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/qr-code': {
+      id: '/generate/qr-code'
+      path: '/generate/qr-code'
+      fullPath: '/generate/qr-code'
+      preLoaderRoute: typeof GenerateQrCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inspect/keyboard': {
+      id: '/inspect/keyboard'
+      path: '/inspect/keyboard'
+      fullPath: '/inspect/keyboard'
+      preLoaderRoute: typeof InspectKeyboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strings/compare': {
+      id: '/strings/compare'
+      path: '/strings/compare'
+      fullPath: '/strings/compare'
+      preLoaderRoute: typeof StringsCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/strings/json-format': {
+      id: '/strings/json-format'
+      path: '/strings/json-format'
+      fullPath: '/strings/json-format'
+      preLoaderRoute: typeof StringsJsonFormatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validate/ids': {
+      id: '/validate/ids'
+      path: '/validate/ids'
+      fullPath: '/validate/ids'
+      preLoaderRoute: typeof ValidateIdsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
