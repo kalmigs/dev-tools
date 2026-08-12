@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { diffWords, diffChars, type Change } from 'diff';
+import { type Change } from 'diff';
 import { CheckIcon, XIcon, ChevronDownIcon } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -11,6 +11,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import {
   cn,
   countWords,
+  diffStrings,
   normalizeWhitespace,
   sortObjectKeys,
   sortArraysInObject,
@@ -430,14 +431,11 @@ function ComparePage() {
   const diffChanges = useMemo(() => {
     if (!result || !highlight) return null;
 
-    // Use word diff for better readability, fall back to char diff for short strings
-    const useCharDiff = result.normalizedA.length < 50 && result.normalizedB.length < 50;
-    const diffFn = useCharDiff ? diffChars : diffWords;
-
-    return diffFn(result.normalizedA, result.normalizedB, {
-      ignoreCase: ignoreCase,
+    return diffStrings(result.normalizedA, result.normalizedB, {
+      ignoreCase,
+      ignoreWhitespace,
     });
-  }, [result, highlight, ignoreCase]);
+  }, [result, highlight, ignoreCase, ignoreWhitespace]);
 
   // Word counts
   const wordCountA = useMemo(() => countWords(stringA), [stringA]);
