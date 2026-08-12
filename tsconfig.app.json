@@ -21,8 +21,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    /* Path aliases for shadcn */
-    "baseUrl": ".",
+    /* Path aliases for shadcn. Without baseUrl (removed in TS 7) these resolve
+       relative to this file's directory, which is what the leading ./ already assumed. */
     "paths": {
       "@/*": ["./src/*"]
     }
